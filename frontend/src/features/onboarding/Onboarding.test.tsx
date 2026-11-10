@@ -31,10 +31,20 @@ const PROVIDERS: ProviderInfo[] = [
   },
 ];
 
+const DOCUMENT_DEFAULTS = {
+  engine: "typst",
+  template: "modern",
+  language: "fr",
+  jury: true,
+  revision: true,
+  threshold: 82,
+} as const;
+
 function settings(overrides: Partial<SettingsRead> = {}): SettingsRead {
   return {
     ai: { provider: "mock", model: null, timeout_seconds: 300 },
     ui: { language: "fr", theme: "system" },
+    documents: DOCUMENT_DEFAULTS,
     onboarding_completed: false,
     demo_mode: true,
     ...overrides,

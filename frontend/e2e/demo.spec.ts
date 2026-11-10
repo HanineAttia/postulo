@@ -37,8 +37,8 @@ test("the demo job shows live progress until it finishes", async ({ page }) => {
 });
 
 test("client-side routes work when loaded directly", async ({ page }) => {
-  await page.goto("/workshop");
-  await expect(page.getByRole("heading", { level: 1, name: "Atelier" })).toBeVisible();
-  await page.getByRole("link", { name: "Voir la démonstration" }).click();
+  await page.goto("/tracking");
+  await expect(page.getByRole("heading", { level: 1, name: "Suivi" })).toBeVisible();
+  await page.getByRole("link", { name: "Retour au tableau de bord" }).click();
   await expect(page).toHaveURL(/\/$/);
 });

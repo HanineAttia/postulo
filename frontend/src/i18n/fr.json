@@ -109,11 +109,6 @@
       "description": "Tes organisations cibles, leur page carrières et leur score de chaleur.",
       "action": "Compléter mon parcours d'abord"
     },
-    "workshop": {
-      "title": "Atelier",
-      "description": "Un CV et une lettre adaptés à chaque offre, compatibles ATS et relus par un jury simulé.",
-      "action": "Voir la démonstration"
-    },
     "tracking": {
       "title": "Suivi",
       "description": "Tes candidatures en tableau ou en Kanban, tes relances et tes statistiques.",
@@ -522,9 +517,164 @@
     "sampleWarning": "Ton parcours actuel sera remplacé.",
     "sampleLoaded": "Profil d'exemple chargé."
   },
+  "workshop": {
+    "title": "Atelier",
+    "subtitle": "Colle une offre : Postulo prépare un CV et une lettre adaptés, vérifie leur lisibilité par les logiciels de recrutement et les fait relire par un jury simulé. Rien n'est envoyé : c'est toi qui envoies.",
+    "form": {
+      "title": "Nouvelle candidature",
+      "description": "Le CV et la lettre reprennent uniquement les éléments de ton parcours.",
+      "offer": "Texte de l'offre",
+      "offerHint": "Colle l'offre complète : missions, profil recherché, informations sur l'organisation.",
+      "offerPlaceholder": "Intitulé, missions, profil recherché...",
+      "offerTooShort": "Colle le texte complet de l'offre (au moins 80 caractères).",
+      "useSample": "Utiliser l'offre d'exemple",
+      "organization": "Organisation",
+      "position": "Poste",
+      "detected": "Détecté dans l'offre",
+      "language": "Langue des documents",
+      "template": "Modèle",
+      "quality": "Contrôle qualité",
+      "jury": "Jury simulé (un appel IA)",
+      "revision": "Correction automatique sous le seuil (un ou deux appels IA)",
+      "threshold": "Seuil",
+      "submit": "Préparer ma candidature",
+      "goToProfile": "Ouvrir Mon parcours"
+    },
+    "languages": {
+      "fr": "Français",
+      "en": "Anglais"
+    },
+    "templates": {
+      "modern": "Moderne",
+      "classic": "Classique"
+    },
+    "progress": {
+      "title": "Préparation en cours",
+      "done": "Candidature prête."
+    },
+    "empty": {
+      "title": "Aucune candidature ouverte",
+      "description": "Colle une offre à gauche puis lance la préparation. Tu suivras chaque étape en direct : rédaction, mise en page, contrôle ATS, jury et correction."
+    },
+    "recent": {
+      "title": "Candidatures récentes",
+      "jury": "Jury {{score}}"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "sent": "Envoyée",
+      "followed_up": "Relancée",
+      "interview": "Entretien",
+      "rejected": "Refusée",
+      "offer_received": "Offre reçue",
+      "no_answer": "Sans réponse",
+      "withdrawn": "Retirée"
+    },
+    "result": {
+      "untitled": "Candidature",
+      "tabsLabel": "Résultats de la candidature",
+      "tabs": {
+        "documents": "Documents",
+        "quality": "Contrôle qualité",
+        "email": "E-mail",
+        "advice": "Conseils et lacunes",
+        "edit": "Éditer"
+      },
+      "warnings_one": "{{count}} point à vérifier",
+      "warnings_other": "{{count}} points à vérifier",
+      "markSent": "J'ai envoyé",
+      "sent": "Envoyée",
+      "sentOn": "Envoyée le {{date}}",
+      "sentToast": "Candidature marquée comme envoyée."
+    },
+    "documents": {
+      "choose": "Document affiché",
+      "cv": "CV",
+      "letter": "Lettre",
+      "download": "Télécharger",
+      "openFolder": "Ouvrir le dossier",
+      "facts": "{{pages}} page(s) · compactage niveau {{level}} · moteur {{engine}}",
+      "missing": "Le document est introuvable. Régénère-le depuis l'onglet Éditer."
+    },
+    "quality": {
+      "juryScore": "Note du jury",
+      "atsScore": "Contrôle ATS",
+      "notRun": "Non lancé",
+      "then": "puis",
+      "revisionKept": "Une correction a été appliquée : la version corrigée est gardée.",
+      "revisionDropped": "La correction n'a pas amélioré la note : la première version est gardée.",
+      "jury": "Jury simulé",
+      "sixSeconds": "Impression en 6 secondes :",
+      "strengths": "Points forts",
+      "corrections": "Corrections proposées",
+      "decisions": {
+        "interview": "Entretien",
+        "maybe": "Peut-être",
+        "reject": "Refus"
+      },
+      "criteria": {
+        "fit": "Adéquation",
+        "impact": "Impact",
+        "clarity": "Clarté",
+        "keywords": "Mots-clés",
+        "credibility": "Crédibilité",
+        "letter": "Lettre",
+        "form": "Forme"
+      },
+      "priorities": {
+        "high": "Haute",
+        "medium": "Moyenne",
+        "low": "Basse"
+      },
+      "ats": "Contrôle ATS",
+      "ok": "réussi",
+      "failed": "à corriger",
+      "keywordsFound": "Mots-clés trouvés ({{count}})",
+      "keywordsMissing": "Mots-clés absents ({{count}})",
+      "atsText": "Texte vu par l'ATS"
+    },
+    "ats": {
+      "text_extractable": "Texte extractible",
+      "page_count": "Nombre de pages",
+      "name_first_line": "Nom en première ligne",
+      "email_readable": "E-mail lisible",
+      "phone_readable": "Téléphone lisible",
+      "links_clickable": "Liens cliquables",
+      "standard_headings": "Intitulés standards",
+      "no_bad_characters": "Aucun caractère illisible",
+      "no_ligatures": "Aucune ligature",
+      "dates_detected": "Dates détectables"
+    },
+    "email": {
+      "subject": "Objet",
+      "body": "Message",
+      "words": "{{count}} mots (objectif : 80 à 130)",
+      "attachments": "Pense à joindre le CV et la lettre téléchargés depuis l'onglet Documents.",
+      "open": "Ouvrir dans ma messagerie",
+      "save": "Enregistrer l'e-mail",
+      "saved": "E-mail enregistré."
+    },
+    "advice": {
+      "tips": "Conseils",
+      "gaps": "Lacunes par rapport à l'offre",
+      "removedSkills": "Compétences retirées (absentes de ton parcours)",
+      "empty": "Aucun conseil pour cette candidature."
+    },
+    "edit": {
+      "intro": "Modifie le titre, l'accroche, les puces ou la lettre, puis régénère les PDF. Aucun appel à l'IA : le contrôle ATS est refait automatiquement.",
+      "cvTitle": "Titre du CV",
+      "summary": "Accroche",
+      "bulletsHint": "Une puce par ligne.",
+      "letter": "Lettre de motivation",
+      "letterSubject": "Objet de la lettre",
+      "paragraph": "Paragraphe {{number}}",
+      "regenerate": "Régénérer le PDF",
+      "saved": "PDF régénérés."
+    }
+  },
   "settings": {
     "title": "Réglages",
-    "subtitle": "Choisis ton fournisseur d'IA. Les autres réglages arrivent avec les prochaines phases.",
+    "subtitle": "Choisis ton fournisseur d'IA et les réglages des documents. Les autres réglages arrivent avec les prochaines phases.",
     "ai": {
       "title": "Intelligence artificielle",
       "description": "Postulo utilise l'IA de ton choix pour structurer ton CV et préparer tes candidatures.",
@@ -553,6 +703,16 @@
       "save": "Enregistrer",
       "saved": "Réglages enregistrés.",
       "duration": "({{seconds}} s)"
+    },
+    "documents": {
+      "title": "Documents",
+      "description": "Valeurs par défaut de l'Atelier.",
+      "engine": "Moteur de rendu",
+      "engines": {
+        "typst": "Typst (recommandé)",
+        "html": "HTML (secours, via Edge ou Chrome)"
+      },
+      "engineHint": "Typst est intégré à Postulo. Le moteur HTML utilise Microsoft Edge ou Google Chrome installé sur cet ordinateur."
     },
     "more": {
       "title": "Premiers pas",

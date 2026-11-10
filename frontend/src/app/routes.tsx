@@ -8,7 +8,7 @@ import { AppLayout } from "./layout/AppLayout";
 import { NAV_ITEMS, type NavItem } from "./navigation";
 
 /** Pages already delivered; the others show a placeholder until their phase. */
-const IMPLEMENTED = ["dashboard", "profile", "settings"] as const;
+const IMPLEMENTED = ["dashboard", "profile", "workshop", "settings"] as const;
 type PlaceholderItem = NavItem & { key: Exclude<NavItem["key"], (typeof IMPLEMENTED)[number]> };
 
 function isPlaceholder(item: NavItem): item is PlaceholderItem {
@@ -32,6 +32,13 @@ export const routes: RouteObject[] = [
         // Forms, zod and drag and drop are loaded only when the page is opened.
         path: "profile",
         lazy: async () => ({ Component: (await import("@/pages/ProfilePage")).ProfilePage }),
+      },
+      {
+        // PDF preview, editing and quality reports: loaded only when the page is opened.
+        path: "workshop",
+        lazy: async () => ({
+          Component: (await import("@/features/workshop/WorkshopPage")).WorkshopPage,
+        }),
       },
       {
         path: "settings",

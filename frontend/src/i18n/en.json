@@ -109,11 +109,6 @@
       "description": "Your target organizations, their career page and their warmth score.",
       "action": "Complete my background first"
     },
-    "workshop": {
-      "title": "Workshop",
-      "description": "A resume and cover letter tailored to each offer, ATS-friendly and reviewed by a simulated jury.",
-      "action": "See the demo"
-    },
     "tracking": {
       "title": "Tracking",
       "description": "Your applications as a table or Kanban board, your follow-ups and your statistics.",
@@ -522,9 +517,164 @@
     "sampleWarning": "Your current career will be replaced.",
     "sampleLoaded": "Sample profile loaded."
   },
+  "workshop": {
+    "title": "Workshop",
+    "subtitle": "Paste an offer: Postulo prepares a tailored CV and cover letter, checks that recruiting software can read them and has a simulated jury review them. Nothing is sent: you send it yourself.",
+    "form": {
+      "title": "New application",
+      "description": "The CV and letter only use elements from your career library.",
+      "offer": "Offer text",
+      "offerHint": "Paste the full offer: duties, required profile, information about the organization.",
+      "offerPlaceholder": "Title, duties, required profile...",
+      "offerTooShort": "Paste the full offer text (at least 80 characters).",
+      "useSample": "Use the sample offer",
+      "organization": "Organization",
+      "position": "Position",
+      "detected": "Detected from the offer",
+      "language": "Document language",
+      "template": "Template",
+      "quality": "Quality check",
+      "jury": "Simulated jury (one AI call)",
+      "revision": "Automatic revision below the threshold (one or two AI calls)",
+      "threshold": "Threshold",
+      "submit": "Prepare my application",
+      "goToProfile": "Open My career"
+    },
+    "languages": {
+      "fr": "French",
+      "en": "English"
+    },
+    "templates": {
+      "modern": "Modern",
+      "classic": "Classic"
+    },
+    "progress": {
+      "title": "Preparing",
+      "done": "Application ready."
+    },
+    "empty": {
+      "title": "No application open",
+      "description": "Paste an offer on the left and start. You will follow each step live: draft, layout, ATS check, jury and revision."
+    },
+    "recent": {
+      "title": "Recent applications",
+      "jury": "Jury {{score}}"
+    },
+    "status": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "followed_up": "Followed up",
+      "interview": "Interview",
+      "rejected": "Rejected",
+      "offer_received": "Offer received",
+      "no_answer": "No answer",
+      "withdrawn": "Withdrawn"
+    },
+    "result": {
+      "untitled": "Application",
+      "tabsLabel": "Application results",
+      "tabs": {
+        "documents": "Documents",
+        "quality": "Quality check",
+        "email": "E-mail",
+        "advice": "Tips and gaps",
+        "edit": "Edit"
+      },
+      "warnings_one": "{{count}} point to check",
+      "warnings_other": "{{count}} points to check",
+      "markSent": "I sent it",
+      "sent": "Sent",
+      "sentOn": "Sent on {{date}}",
+      "sentToast": "Application marked as sent."
+    },
+    "documents": {
+      "choose": "Displayed document",
+      "cv": "CV",
+      "letter": "Letter",
+      "download": "Download",
+      "openFolder": "Open folder",
+      "facts": "{{pages}} page(s) · compaction level {{level}} · {{engine}} engine",
+      "missing": "The document is missing. Regenerate it from the Edit tab."
+    },
+    "quality": {
+      "juryScore": "Jury score",
+      "atsScore": "ATS check",
+      "notRun": "Not run",
+      "then": "then",
+      "revisionKept": "A revision was applied: the revised version is kept.",
+      "revisionDropped": "The revision did not improve the score: the first version is kept.",
+      "jury": "Simulated jury",
+      "sixSeconds": "6-second impression:",
+      "strengths": "Strengths",
+      "corrections": "Suggested corrections",
+      "decisions": {
+        "interview": "Interview",
+        "maybe": "Maybe",
+        "reject": "Reject"
+      },
+      "criteria": {
+        "fit": "Fit",
+        "impact": "Impact",
+        "clarity": "Clarity",
+        "keywords": "Keywords",
+        "credibility": "Credibility",
+        "letter": "Letter",
+        "form": "Form"
+      },
+      "priorities": {
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      },
+      "ats": "ATS check",
+      "ok": "passed",
+      "failed": "to fix",
+      "keywordsFound": "Keywords found ({{count}})",
+      "keywordsMissing": "Missing keywords ({{count}})",
+      "atsText": "Text seen by the ATS"
+    },
+    "ats": {
+      "text_extractable": "Extractable text",
+      "page_count": "Page count",
+      "name_first_line": "Name on the first line",
+      "email_readable": "Readable e-mail",
+      "phone_readable": "Readable phone",
+      "links_clickable": "Clickable links",
+      "standard_headings": "Standard headings",
+      "no_bad_characters": "No unreadable character",
+      "no_ligatures": "No ligature",
+      "dates_detected": "Detectable dates"
+    },
+    "email": {
+      "subject": "Subject",
+      "body": "Message",
+      "words": "{{count}} words (target: 80 to 130)",
+      "attachments": "Remember to attach the CV and letter downloaded from the Documents tab.",
+      "open": "Open in my mail app",
+      "save": "Save the e-mail",
+      "saved": "E-mail saved."
+    },
+    "advice": {
+      "tips": "Tips",
+      "gaps": "Gaps compared with the offer",
+      "removedSkills": "Removed skills (not in your career library)",
+      "empty": "No tips for this application."
+    },
+    "edit": {
+      "intro": "Edit the title, summary, bullets or letter, then regenerate the PDFs. No AI call: the ATS check runs again automatically.",
+      "cvTitle": "CV title",
+      "summary": "Summary",
+      "bulletsHint": "One bullet per line.",
+      "letter": "Cover letter",
+      "letterSubject": "Letter subject",
+      "paragraph": "Paragraph {{number}}",
+      "regenerate": "Regenerate the PDF",
+      "saved": "PDFs regenerated."
+    }
+  },
   "settings": {
     "title": "Settings",
-    "subtitle": "Choose your AI provider. Other settings arrive with the next phases.",
+    "subtitle": "Choose your AI provider and document settings. Other settings arrive with the next phases.",
     "ai": {
       "title": "Artificial intelligence",
       "description": "Postulo uses the AI of your choice to structure your CV and prepare your applications.",
@@ -553,6 +703,16 @@
       "save": "Save",
       "saved": "Settings saved.",
       "duration": "({{seconds}} s)"
+    },
+    "documents": {
+      "title": "Documents",
+      "description": "Workshop defaults.",
+      "engine": "Rendering engine",
+      "engines": {
+        "typst": "Typst (recommended)",
+        "html": "HTML (fallback, via Edge or Chrome)"
+      },
+      "engineHint": "Typst is built into Postulo. The HTML engine uses Microsoft Edge or Google Chrome installed on this computer."
     },
     "more": {
       "title": "Getting started",

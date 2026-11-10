@@ -7,13 +7,12 @@ import { Button } from "@/components/ui/button";
 
 import type { NavItem } from "../app/navigation";
 
-type PlaceholderKey = Exclude<NavItem["key"], "dashboard" | "profile" | "settings">;
+type PlaceholderKey = Exclude<NavItem["key"], "dashboard" | "profile" | "workshop" | "settings">;
 
 const ACTION_TARGET: Record<PlaceholderKey, string> = {
   offers: "/profile",
   hiddenMarket: "/profile",
   organizations: "/profile",
-  workshop: "/",
   tracking: "/",
   network: "/profile",
   coach: "/profile",

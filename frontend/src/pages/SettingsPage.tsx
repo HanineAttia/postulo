@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AIProviderForm } from "@/features/settings/AIProviderForm";
+import { DocumentSettingsForm } from "@/features/settings/DocumentSettingsForm";
 
 export function SettingsPage() {
   const { t } = useTranslation();
@@ -21,6 +22,15 @@ export function SettingsPage() {
         </CardHeader>
         <CardContent>
           <AIProviderForm />
+        </CardContent>
+      </Card>
+      <Card aria-labelledby="settings-documents-title">
+        <CardHeader>
+          <CardTitle id="settings-documents-title">{t("settings.documents.title")}</CardTitle>
+          <CardDescription>{t("settings.documents.description")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DocumentSettingsForm />
         </CardContent>
       </Card>
       <Card aria-labelledby="settings-more-title">

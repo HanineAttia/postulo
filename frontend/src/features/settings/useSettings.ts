@@ -9,7 +9,12 @@ export function useSettings() {
 }
 
 export function toSettings(read: SettingsRead): Settings {
-  return { ai: read.ai, ui: read.ui, onboarding_completed: read.onboarding_completed };
+  return {
+    ai: read.ai,
+    ui: read.ui,
+    documents: read.documents,
+    onboarding_completed: read.onboarding_completed,
+  };
 }
 
 /** Save the full settings object, then refresh the header status. */

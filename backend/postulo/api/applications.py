@@ -237,7 +237,7 @@ async def update_documents(application_id: str, body: DocumentsUpdate) -> Applic
 
 @router.post("/{application_id}/sent")
 def mark_sent(application_id: str) -> ApplicationDetail:
-    """The user sent the application herself (the app never sends anything)."""
+    """The user sent the application (the app never sends anything)."""
     with Session(get_engine()) as session:
         row = session.get(Application, application_id)
         if row is None:
