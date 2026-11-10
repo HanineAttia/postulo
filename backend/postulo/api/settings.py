@@ -13,11 +13,17 @@ router = APIRouter(prefix="/api/settings", tags=["settings"])
 class SettingsRead(BaseModel):
     ai: AISettings
     ui: UISettings
+    onboarding_completed: bool
     demo_mode: bool
 
     @classmethod
     def from_settings(cls, settings: Settings) -> SettingsRead:
-        return cls(ai=settings.ai, ui=settings.ui, demo_mode=settings.demo_mode)
+        return cls(
+            ai=settings.ai,
+            ui=settings.ui,
+            onboarding_completed=settings.onboarding_completed,
+            demo_mode=settings.demo_mode,
+        )
 
 
 @router.get("")

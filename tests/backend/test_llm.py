@@ -132,7 +132,7 @@ def test_registry_returns_mock_by_default() -> None:
 
 def test_registry_rejects_unimplemented_provider() -> None:
     settings = Settings()
-    settings.ai.provider = "anthropic_api"
+    settings.ai.provider = "openai_compatible"
     with pytest.raises(LLMError) as info:
         registry.get_provider(settings)
     assert info.value.kind is LLMErrorKind.NOT_AVAILABLE

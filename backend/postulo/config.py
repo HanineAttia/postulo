@@ -75,6 +75,7 @@ class Settings(BaseModel):
 
     ai: AISettings = Field(default_factory=AISettings)
     ui: UISettings = Field(default_factory=UISettings)
+    onboarding_completed: bool = False
 
     @property
     def demo_mode(self) -> bool:
