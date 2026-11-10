@@ -1,12 +1,37 @@
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router";
+import { NavLink, useMatch } from "react-router";
 
 import { LogoMark } from "@/components/Logo";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-import { NAVIGATION } from "../navigation";
+import { NAVIGATION, type NavItem } from "../navigation";
+
+function SidebarLink({ item, label, collapsed }: { item: NavItem; label: string; collapsed: boolean }) {
+  // A string className (not NavLink's function form): the tooltip trigger merges props
+  // through Radix Slot, which would stringify a function.
+  const isActive = useMatch({ path: item.path, end: item.path === "/" }) !== null;
+  const Icon = item.icon;
+  return (
+    <Tooltip content={label} side="right" enabled={collapsed}>
+      <NavLink
+        to={item.path}
+        end={item.path === "/"}
+        aria-label={collapsed ? label : undefined}
+        className={cn(
+          "flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-muted transition-colors hover:bg-surface-raised hover:text-ink",
+          collapsed && "justify-center px-0",
+          isActive &&
+            "bg-surface-raised text-primary shadow-sm ring-1 ring-border hover:text-primary",
+        )}
+      >
+        <Icon className="size-[18px] shrink-0" strokeWidth={1.75} aria-hidden="true" />
+        {!collapsed && <span className="truncate">{label}</span>}
+      </NavLink>
+    </Tooltip>
+  );
+}
 
 interface SidebarProps {
   collapsed: boolean;
@@ -50,32 +75,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   </h2>
                 ))}
               <ul aria-labelledby={collapsed ? undefined : headingId} className="flex flex-col gap-0.5">
-                {group.items.map((item) => {
-                  const label = t(`nav.${item.key}`);
-                  const Icon = item.icon;
-                  return (
-                    <li key={item.key}>
-                      <Tooltip content={label} side="right" enabled={collapsed}>
-                        <NavLink
-                          to={item.path}
-                          end={item.path === "/"}
-                          aria-label={collapsed ? label : undefined}
-                          className={({ isActive }) =>
-                            cn(
-                              "flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-muted transition-colors hover:bg-surface-raised hover:text-ink",
-                              collapsed && "justify-center px-0",
-                              isActive &&
-                                "bg-surface-raised text-primary shadow-sm ring-1 ring-border hover:text-primary",
-                            )
-                          }
-                        >
-                          <Icon className="size-[18px] shrink-0" strokeWidth={1.75} aria-hidden="true" />
-                          {!collapsed && <span className="truncate">{label}</span>}
-                        </NavLink>
-                      </Tooltip>
-                    </li>
-                  );
-                })}
+                {group.items.map((item) => (
+                  <li key={item.key}>
+                    <SidebarLink item={item} label={t(`nav.${item.key}`)} collapsed={collapsed} />
+                  </li>
+                ))}
               </ul>
             </div>
           );

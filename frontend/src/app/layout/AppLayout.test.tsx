@@ -71,6 +71,10 @@ describe("AppLayout", () => {
     expect(screen.queryByRole("heading", { name: "Trouver" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Réglages" })).toBeInTheDocument();
     expect(window.localStorage.getItem("postulo.sidebar")).toBe("collapsed");
+    // Regression: links wrapped in a tooltip must keep real classes, not a stringified function.
+    const active = screen.getByRole("link", { name: "Tableau de bord" });
+    expect(active.className).toContain("text-primary");
+    expect(active.className).not.toContain("=>");
   });
 
   it("switches the interface to English", async () => {
