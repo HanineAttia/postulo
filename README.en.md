@@ -1,6 +1,6 @@
 # Postulo
 
-> Work in progress (phase 1: career library). Provisional name.
+> Work in progress (phase 2: application workshop). Provisional name.
 
 Postulo is a **free, open source, local-first** assistant for finding an internship, apprenticeship,
 fixed-term or permanent job, or freelance mission in France, in any field: a single career library,
@@ -28,7 +28,7 @@ The server listens on `127.0.0.1` only and opens your browser. The first launch 
 
 A 5-step welcome wizard helps you choose the AI, import your CV and set your goal (skippable).
 
-What works today (phase 1):
+What works today (phase 2):
 - **My career** page: full forms for every section, drag-and-drop ordering, completeness score with advice,
   JSON/YAML backup and restore, fictional sample profile.
 - **CV import** (PDF, DOCX, TXT): text extraction, AI structuring, preview of the changes, then merge
@@ -36,6 +36,14 @@ What works today (phase 1):
 - **AI providers**: demo (default, simulated), Anthropic API with your own key (stored in the system
   keyring; default model Claude Sonnet 5.5), and Claude Code CLI (personal use only, off by default,
   runs in an empty temporary folder with no tools; check Anthropic's terms before enabling it).
+- **Workshop**: paste an offer and follow the live progress: one AI call drafts the CV, cover letter,
+  e-mail and tips (references only: facts always come from your library; invented skills, interests
+  or numbers are removed and reported), Typst renders a one-column, ATS-friendly PDF compacted to one
+  page, an ATS check reads it back (text, contacts, links, headings, ligatures, keyword coverage), a
+  simulated jury scores it out of 100 and one revision runs below the threshold (before/after scores
+  shown). Inline PDF preview, editable e-mail with `mailto:`, and an Edit tab that regenerates the
+  PDFs without any AI call. Nothing is sent for you: mark the application as sent yourself. An HTML
+  fallback engine prints with Microsoft Edge or Google Chrome.
 
 Windows users: Smart App Control may block compiled Python libraries. See
 [docs/dev-windows.md](docs/dev-windows.md) (in French).

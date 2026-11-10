@@ -135,3 +135,5 @@ Smart App Control ne s'applique pas aux programmes Linux de WSL.
 | Accents illisibles dans le terminal | Utilise Windows Terminal ; `uv run postulo` écrit en UTF-8. |
 | `git push` : `Failed to connect to github.com port 443` | Problème réseau intermittent : réessaie plus tard, ou depuis un autre réseau. |
 | Page « l'interface n'est pas compilée » | `pnpm -C frontend install` puis `pnpm -C frontend build`. |
+| `uv sync` : `failed to remove file ... postulo.exe` (os error 32) | Postulo tourne encore : ferme-le (Ctrl+C dans son terminal) puis relance `uv sync`. |
+| Moteur HTML : « Aucun navigateur compatible trouvé » | Le moteur de secours imprime avec Microsoft Edge (installé avec Windows) ou Google Chrome. Sinon, garde le moteur Typst (par défaut). Facultatif : `uv sync --extra html` puis `uv run playwright install chromium`. |

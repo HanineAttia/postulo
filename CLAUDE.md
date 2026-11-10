@@ -9,7 +9,10 @@ up to date (commands, architecture, conventions, decisions).
 - **Phase 0 (foundations): done.** Backend, frontend shell, demo mode, background jobs with SSE, CI.
 - **Phase 1 (career library): done**, except the live Claude Code ping (acceptance criterion 3), which
   needs the maintainer's go-ahead because it uses her quota: `uv run pytest -m network -k claude`.
-- Next: phase 2 (application workshop: prompts, honesty guard, Typst rendering, ATS check, jury).
+- **Phase 2 (application workshop): done** in demo mode (CV on one page, clickable links, no
+  ligature, ATS 93, jury 74 then 84). Still to validate by the maintainer with her quota: a real
+  offer pasted in the workshop with a real provider (ATS >= 85 expected; SPEC 7.7 references).
+- Next: phase 3 (published offers: sources, pre-sorting, AI analysis, Offers and Organizations).
 
 ## Working rules (SPEC section 0, summarized)
 
@@ -64,6 +67,7 @@ Run from the repository root unless noted.
 | Frontend lint / types / tests | `pnpm -C frontend lint` · `pnpm -C frontend typecheck` · `pnpm -C frontend test` |
 | End-to-end (build first) | `pnpm -C frontend build` then `pnpm -C frontend e2e` |
 | E2E with installed Edge | set `PLAYWRIGHT_CHANNEL=msedge` before `pnpm -C frontend e2e` |
+| HTML engine with Playwright (optional) | `uv sync --extra html` then `uv run playwright install chromium` |
 | New DB migration | `uv run alembic -c backend/postulo/db/alembic.ini revision --autogenerate -m "..."` |
 
 `pnpm -C frontend e2e` starts the real backend itself (`uv run postulo` on port 8790, throwaway
@@ -81,33 +85,50 @@ backend/postulo/
   __main__.py        `postulo` CLI: free port from 8765, opens browser, detects a running instance
   app.py             create_app(): routers, LLMError handler, TrustedHost, dev-only CORS, SPA serving
   config.py          data dir (%APPDATA%/Postulo, ~/.local/share/postulo, POSTULO_HOME), settings.json
-  db/models.py       SQLModel tables: job, llm_usage, profile (+ UTCDateTime column type)
-  data/              sample_profile.json ("Camille Exemple", fictional)
+  errors.py          UserError (French message + detail), shown by jobs like LLMError
+  db/models.py       SQLModel tables: job, llm_usage, profile, application (+ UTCDateTime type)
+  data/              sample_profile.json ("Camille Exemple"), sample_offer.txt (fictional offer)
+  assets/fonts/      Inter and Source Serif 4 TTF (OFL licences next to them)
+  templates/typst/   common.typ, cv.typ, letter.typ (read data.json; style from data.layout)
+  templates/html/    base/cv/letter .html.j2 for the HTML fallback engine
   db/session.py      engine cache, Alembic upgrade at startup, interrupted-job cleanup
   db/migrations/     Alembic (render_as_batch for SQLite)
-  api/               one router per domain: health, settings, llm, jobs, profile
+  api/               one router per domain: health, settings, llm, jobs, profile, applications
   services/llm/      base.py (LLMProvider protocol, LLMError), json_utils.py (extract_json,
                      complete_json), usage.py (llm_usage logging), registry.py,
                      providers/{mock, mock_cv, claude_code_cli, anthropic_api}.py
   services/secrets.py  keyring get/set/delete (API key), ANTHROPIC_API_KEY env fallback
-  services/prompts/  render(name, **ctx) (Jinja2, StrictUndefined), *.md templates, sanitize.py
+  services/prompts/  render(name, **ctx) (Jinja2, StrictUndefined), *.md templates (cv_extract,
+                     application_draft, application_revision, jury), sanitize.py
   services/profile/  schema.py (pydantic, SPEC 6.1), references.py (F0/E0..., computed), store.py
                      (single row + version), lenient.py (drop invalid fields as warnings), merge.py
                      (merge_profiles + ImportDiff), preview.py, completeness.py, backup.py,
                      sample.py, cv_import.py (PDF/DOCX/TXT text, cv_import job)
+  services/documents/ model.py (CvDocument, LetterDocument, Layout: render-ready), labels.py (dates,
+                     headings FR/EN), selection.py (limits, section order, default selection),
+                     draft.py (ApplicationDraft schema, prompts), honesty.py (guard SPEC 7.4),
+                     assemble.py (build_cv/build_letter, typography, placeholders, file names),
+                     render.py (Typst), compact.py (levels 0-4), html_engine.py (Edge/Chrome)
+  services/quality/  ats_check.py (pypdfium2 text, pypdf links, score 60/40), jury.py (normalize)
+  services/workshop/ pipeline.py (application job, render_documents, regenerate), storage.py
+                     (application folder, ApplicationReport, EditableDocuments)
   services/jobs.py   JobManager: asyncio tasks persisted in `job`, fan-out queues for SSE
   services/demo.py   demo job (5 steps: draft, layout, ats_check, jury, revision) using MockProvider
   services/<domain>/ empty packages for later phases (profile, sources, matching, documents...)
 frontend/src/
   app/               Providers, routes, navigation (SPEC 12.2 sidebar), layout (Sidebar, Header)
   pages/             DashboardPage, PlaceholderPage (empty state per future page), NotFoundPage
-  features/jobs/     useJobEvents (EventSource hook), DemoJobCard
+  features/jobs/     useJobEvents (EventSource hook), JobProgress (shared live steps), DemoJobCard
   features/llm/      useLLMStatus (header counter and provider badge)
   features/profile/  schema.ts (zod mirror of the pydantic schema), fields.tsx (spec-driven fields
                      bound to react-hook-form), sections.ts (form layout per section),
                      ItemSectionEditor (sortable cards), ProfileEditor (one form for all tabs),
                      ImportCvPanel, ImportPreviewPanel, BackupPanel, CompletenessCard, useProfile
-  features/settings/ AIProviderForm (provider, model, key, connection test), useSettings
+  features/settings/ AIProviderForm (provider, model, key, connection test), DocumentSettingsForm,
+                     useSettings
+  features/workshop/ WorkshopPage (/workshop?id=), ApplicationForm, ApplicationResult (tabs:
+                     documents, quality, e-mail, advice, edit), QualityPanel, EditPanel,
+                     useApplications
   features/onboarding/ OnboardingPage (/welcome, 5 steps, shown until onboarding_completed)
   components/ui/     shadcn/ui-style components on `radix-ui` (button, card, badge, progress, tooltip,
                      skeleton, input, textarea, native-select, label, tabs, field, toaster)
@@ -145,6 +166,23 @@ Prompts live in `services/prompts/<name>.md`. External text (CV, offer, page) al
 - `anthropic_api`: official SDK 2.x (built on `httpx2`; the key is sent as `Authorization: Bearer`),
   `client.beta.messages.create(..., betas=["server-side-fallback-2026-07-01"], fallbacks="default")`,
   `pause_turn` continuations, refusals handled. Tests inject `httpx2.MockTransport`.
+
+### Application workshop (phase 2)
+`POST /api/applications` starts an `application` job (steps draft, layout, ats_check, jury, revision).
+One AI call returns an `ApplicationDraft`: references (E0, P1...) and rewritten bullets, title, summary,
+section order, skills, interests, offer keywords, letter paragraphs, e-mail, tips, gaps. Contact details
+are never sent to the AI. `honesty.apply_guard` works on a deep copy and returns a `Selection`: unknown
+refs ignored, skills and interests outside the library removed (accents, case, parentheses ignored),
+fallback selection by offer keywords, bullets or summary with a number absent from the source reverted,
+keywords absent from the offer dropped. `assemble.build_cv` rebuilds facts from the library and sorts
+newest first. `render_documents` compacts (levels 0-4 on copies), renders and runs the ATS check. The
+jury reads the text extracted by pypdfium2; below the threshold, one revision starts from the
+**original** draft (`merge_revision` keeps the parts the AI left out); the better version is kept and
+both scores are reported. Everything is written to `<data>/applications/<id>/` (offer.txt, draft.json,
+revised_draft.json, documents.json = editable full documents, data.json, report.json, PDFs); the row
+is inserted at the end of the job. `PUT /api/applications/{id}/documents` re-renders edited documents
+and re-runs the ATS check without AI. Demo answers: `providers/mock_application.py` (jury 74, then 8.4
+on 10, normalized to 84).
 
 ### Career library and imports
 The profile is one JSON document (table `profile`, single row, `version` bumped on each save).
@@ -197,6 +235,17 @@ empty fields, unites lists, and never overwrites a filled field ("kept").
 | Native `<select>` instead of Radix Select | Accessible by default and works with react-hook-form `register`. |
 | Onboarding steps 4 and 5 shown as "coming soon" | Maintainer's choice; sources and organizations arrive in phase 3. |
 | Playwright `workers: 1` | Test files share one backend and one data directory. |
+| Typst through the `typst` package (typst-py 0.15, Typst 0.15.1), system fonts ignored | API checked in its own stubs; same output on every machine. |
+| Inter (modern) and Source Serif 4 (classic), static TTF | OFL, complete French glyphs; Typst cannot read woff2. |
+| One Typst template per document, style in `data.layout` | Two models without duplicating the layout logic. |
+| Links and dates wrapped in `box` in Typst | A line break inside a URL made pdfium report U+FFFE. |
+| HTML engine drives Edge/Chrome on the command line; Playwright only as an optional extra | Maintainer's choice: no 100 MB dependency, Edge ships with Windows. `--blink-settings` breaks printing. |
+| One AI call for CV, letter, e-mail and tips | Saves the user's quota (SPEC 0, rule 8). |
+| Numbers in rewritten bullets checked against the source item | Extends SPEC 7.4: a figure is never invented. |
+| Jury on the ATS-extracted text, revision from the original draft | SPEC 7.6 and lesson 5. |
+| Revision kept only if its jury score is not lower | Never replaces a better first version. |
+| Application row inserted at the end of the job | A failed job leaves no half-empty application (its folder keeps the draft). |
+| `application.offer_id` and `organization_id` without foreign keys | The `offer` and `organization` tables arrive in phase 3. |
 
 ## Open points / TODO
 
@@ -210,3 +259,8 @@ empty fields, unites lists, and never overwrites a filled field ("kept").
 - Achievement coach (SPEC 6.2: reformulate weak bullets by asking for the missing figure) is not done;
   it needs the prompt work of phase 2.
 - Encrypted local fallback for secrets when no keyring backend exists (SPEC 2.3).
+- `TODO(latex)`: the optional LaTeX engine (SPEC 7.5) is not implemented; DOCX export is phase 6.
+- Phase 2 acceptance with a real provider and a real pasted offer is still to be run by the
+  maintainer (uses quota). Prompts `application_draft`, `application_revision` and `jury` are
+  VERSION 1 and not tuned on real answers yet.
+- Workshop opened from an offer (`offer_id`) and spontaneous applications: phases 3 and 4.

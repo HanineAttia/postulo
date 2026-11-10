@@ -1,6 +1,6 @@
 # Postulo
 
-> Projet en cours de développement (phase 1 : bibliothèque de parcours). Nom provisoire.
+> Projet en cours de développement (phase 2 : atelier de candidature). Nom provisoire.
 
 Postulo est une application **open source, locale et gratuite** qui aide à décrocher un stage, une alternance, un CDD, un CDI ou une mission en France, dans tous les métiers : bibliothèque de parcours, offres publiées et marché caché, CV et lettres adaptés et compatibles ATS, préparation aux entretiens, suivi des candidatures.
 
@@ -45,6 +45,22 @@ La page **Mon parcours** contient tout ton parcours : identité et liens, object
 - **Qualité du parcours** : un score sur 100 et des conseils concrets (réalisations chiffrées, au moins deux projets, liens...).
 - **Sauvegarde** : export en JSON ou YAML, restauration avec aperçu, et un profil d'exemple fictif (« Camille Exemple »).
 
+## Atelier : préparer une candidature
+
+Dans **Atelier**, colle le texte d'une offre (ou clique sur « Utiliser l'offre d'exemple » en mode démo), choisis la langue (français ou anglais) et le modèle (Moderne ou Classique), puis « Préparer ma candidature ». Tu suis chaque étape en direct :
+
+1. **Rédaction** : un seul appel à l'IA prépare le CV, la lettre, l'e-mail et des conseils. L'IA ne renvoie que des références vers ton parcours : organisations, dates, écoles, villes et liens viennent toujours de ta bibliothèque. Une compétence, un centre d'intérêt ou un chiffre absent de ton parcours est retiré et signalé.
+2. **Mise en page** : PDF en une colonne avec Typst (polices Inter et Source Serif 4 intégrées), liens cliquables, sans ligature ni césure, réduit automatiquement pour tenir sur une page (deux pour un profil confirmé).
+3. **Contrôle ATS** : Postulo relit le PDF comme un logiciel de recrutement (texte, nom en première ligne, coordonnées, liens, intitulés, dates, caractères illisibles) et mesure la couverture des mots-clés de l'offre.
+4. **Jury simulé** : trois rôles (recrutement, manager, spécialiste ATS) notent la candidature sur 100 à partir du texte extrait.
+5. **Correction** : sous le seuil (82 par défaut), une révision est faite une fois, puis tout est contrôlé et noté à nouveau. Tu vois la note avant et après.
+
+Ensuite : aperçu des PDF, téléchargement, ouverture du dossier, e-mail modifiable (bouton « Ouvrir dans ma messagerie »), conseils et lacunes. L'onglet **Éditer** permet de modifier le titre, l'accroche, les puces ou la lettre et de régénérer les PDF **sans nouvel appel à l'IA**. Rien n'est envoyé à ta place : quand tu as envoyé ta candidature, clique sur « J'ai envoyé ».
+
+Chaque candidature a son dossier (`applications/<id>` dans tes données) avec l'offre, le brouillon d'origine de l'IA, la révision, les rapports et les PDF (`CV_Prenom-Nom_Organisation.pdf`, `Lettre_Prenom-Nom_Organisation.pdf`).
+
+Dans **Réglages > Documents** : moteur de rendu (Typst, ou HTML de secours qui imprime avec Microsoft Edge ou Google Chrome), modèle et langue par défaut, jury, correction et seuil.
+
 ## Choisir l'IA
 
 Dans **Réglages**, choisis le fournisseur puis clique sur « Tester la connexion » :
@@ -63,7 +79,10 @@ Les données ne sont jamais enregistrées dans le dépôt.
 
 ## Limites connues
 
-- Phase 1 : la bibliothèque de parcours, l'import de CV et les fournisseurs d'IA sont disponibles. Les offres, l'atelier de candidature et le suivi arrivent dans les phases suivantes (voir [docs/SPEC.md](docs/SPEC.md)).
+- Phase 2 : la bibliothèque de parcours, l'import de CV, les fournisseurs d'IA et l'atelier de candidature sont disponibles. Les offres, le marché caché et le suivi arrivent dans les phases suivantes (voir [docs/SPEC.md](docs/SPEC.md)).
+- En mode démo, les documents et les notes du jury sont simulés (74 puis 84) : ils montrent le fonctionnement, pas la qualité réelle d'une candidature.
+- La lettre est un texte libre : Postulo signale les chiffres absents de ton parcours et de l'offre, mais relis-la toujours avant d'envoyer.
+- Le moteur LaTeX facultatif et l'export DOCX ne sont pas encore disponibles.
 - L'import ne lit pas les PDF scannés (pas de reconnaissance de caractères) ni le format `.doc` ancien : exporte ton CV en PDF texte ou en DOCX.
 - Les liens cliquables d'un PDF ne sont pas encore extraits : seuls les liens écrits en toutes lettres sont repris.
 
