@@ -71,16 +71,16 @@ def main(argv: list[str] | None = None) -> None:
 
     if args.port is None and running_instance(DEFAULT_PORT):
         url = f"http://{HOST}:{DEFAULT_PORT}/"
-        print(f"{APP_NAME} est déjà lancé : {url}")
+        print(f"{APP_NAME} est déjà lancé : {url}", flush=True)
         if not args.no_browser:
             webbrowser.open(url)
         return
 
     port = args.port or find_free_port()
     url = f"http://{HOST}:{port}/"
-    print(f"{APP_NAME} {__version__} : {url}")
-    print(f"Données : {config.data_dir()}")
-    print("Ctrl+C pour arrêter.")
+    print(f"{APP_NAME} {__version__} : {url}", flush=True)
+    print(f"Données : {config.data_dir()}", flush=True)
+    print("Ctrl+C pour arrêter.", flush=True)
 
     if args.reload:
         uvicorn.run(
