@@ -1,0 +1,11 @@
+{% extends "base.html.j2" %}
+{% block content %}
+<div class="letter">
+<p style="margin-top: 1.6em">{% for line in d.recipient %}{{ line }}<br>{% endfor %}{{ d.place_date }}</p>
+{% if d.subject %}<p><strong>{{ d.subject }}</strong></p>{% endif %}
+<p>{{ d.salutation }}</p>
+{% for p in d.paragraphs %}<p>{{ p }}</p>{% endfor %}
+<p>{{ d.closing }}</p>
+<p style="margin-top: 1.6em">{{ d.name }}</p>
+</div>
+{% endblock %}

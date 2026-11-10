@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% block content %}
+{% if d.summary %}<p class="summary">{{ d.summary }}</p>{% endif %}
+{% for s in d.sections %}
+<h2>{{ s.title }}</h2>
+{% for e in s.entries %}
+<div class="entry">
+  <div class="head">
+    <div class="main">
+      <span class="title">{% if e.url %}<a href="{{ e.url }}">{{ e.title }}</a>{% else %}{{ e.title }}{% endif %}</span>
+      {%- if e.subtitle %}, {{ e.subtitle }}{% endif %}
+      {%- if e.location %}, {{ e.location }}{% endif %}
+    </div>
+    {% if e.dates %}<div class="dates">{{ e.dates }}</div>{% endif %}
+  </div>
+  {% if e.details %}<p class="details">{{ e.details }}</p>{% endif %}
+  {% if e.bullets %}<ul>{% for b in e.bullets %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
+</div>
+{% endfor %}
+{% for line in s.lines %}
+<div class="line">{% if line.label %}<span class="label">{{ line.label }}{{ label_sep }}</span>{% endif %}{{ line.text }}</div>
+{% endfor %}
+{% endfor %}
+{% endblock %}

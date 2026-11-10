@@ -21,7 +21,13 @@ dependencies = [
     "anthropic>=2.7.0",
     "keyring>=25.7.0",
     "python-multipart>=0.0.33",
+    "typst>=0.15.2",
+    "pypdf>=7.0.1",
 ]
+
+[project.optional-dependencies]
+# Optional: lets the HTML fallback engine use Playwright's Chromium instead of Edge/Chrome.
+html = ["playwright>=1.50"]
 
 [project.scripts]
 postulo = "postulo.__main__:main"
