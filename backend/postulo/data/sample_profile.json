@@ -1,0 +1,133 @@
+{
+  "identity": {
+    "first_name": "Camille",
+    "last_name": "Exemple",
+    "email": "camille.exemple@example.com",
+    "phone": "+33 6 00 00 00 00",
+    "city": "Paris",
+    "mobility": "Île-de-France, ouverte à toute la France",
+    "driving_license": true,
+    "linkedin": "https://www.linkedin.com/in/camille-exemple-fictif",
+    "github": "https://github.com/camille-exemple-fictif",
+    "portfolio": null,
+    "links": []
+  },
+  "headline": "Élève ingénieure en data science et IA, à la recherche d'un stage de fin d'études",
+  "summary": "Élève ingénieure en dernière année, spécialisée en apprentissage automatique et en traitement du langage. Deux expériences sur des projets de données en production. Profil fictif utilisé par le mode démo de Postulo.",
+  "objective": {
+    "contract_type": "internship",
+    "level": "student",
+    "domain": "Data science et intelligence artificielle",
+    "target_roles": ["Data scientist", "Ingénieure machine learning", "Ingénieure NLP"],
+    "availability": "2027-02",
+    "duration_months": 6,
+    "remote_ok": true,
+    "zones": ["Île-de-France"],
+    "salary_min": null,
+    "salary_max": null
+  },
+  "education": [
+    {
+      "degree": "Diplôme d'ingénieur",
+      "field": "Data science et intelligence artificielle",
+      "school": "École d'ingénieurs Exemple",
+      "city": "Paris",
+      "start": "2024-09",
+      "end": "2027-09",
+      "honors": "",
+      "key_courses": ["Apprentissage statistique", "Deep learning", "Traitement du langage naturel", "Bases de données"],
+      "details": ""
+    },
+    {
+      "degree": "Classe préparatoire MP",
+      "field": "Mathématiques et physique",
+      "school": "Lycée Exemple",
+      "city": "Lyon",
+      "start": "2022-09",
+      "end": "2024-06",
+      "honors": "",
+      "key_courses": [],
+      "details": ""
+    }
+  ],
+  "experiences": [
+    {
+      "title": "Stagiaire data scientist",
+      "organization": "Assurance Exemple",
+      "city": "Paris",
+      "type": "internship",
+      "start": "2026-04",
+      "end": "2026-08",
+      "context": "Équipe data de 8 personnes, projet de détection de fraude sur les déclarations de sinistres.",
+      "achievements": [
+        "Conçu un modèle de détection de fraude (gradient boosting) qui a augmenté le rappel de 18 % à précision constante",
+        "Automatisé la préparation des données avec un pipeline Python, réduisant le temps de mise à jour de 3 jours à 2 heures",
+        "Présenté les résultats au comité de direction et rédigé la documentation de mise en production"
+      ],
+      "skills": ["Python", "scikit-learn", "LightGBM", "SQL", "Airflow"]
+    },
+    {
+      "title": "Assistante de recherche",
+      "organization": "Laboratoire Exemple",
+      "city": "Paris",
+      "type": "research",
+      "start": "2025-06",
+      "end": "2025-08",
+      "context": "Projet de classification de textes juridiques en français.",
+      "achievements": [
+        "Annoté et nettoyé un corpus de 12 000 décisions de justice",
+        "Affiné un modèle de langue français qui atteint 91 % d'exactitude sur 14 catégories"
+      ],
+      "skills": ["PyTorch", "Hugging Face Transformers", "Pandas"]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Assistant de questions-réponses sur documents",
+      "type": "academic",
+      "start": "2025-10",
+      "end": "2026-01",
+      "context": "Projet de groupe (4 personnes) en traitement du langage.",
+      "achievements": [
+        "Construit un système de recherche augmentée (RAG) sur 2 000 pages de documentation",
+        "Mis en place une évaluation automatique sur 150 questions de référence"
+      ],
+      "skills": ["Python", "FAISS", "FastAPI"],
+      "url": null
+    },
+    {
+      "name": "Prévision de la fréquentation des vélos en libre-service",
+      "type": "personal",
+      "start": "2025-02",
+      "end": "2025-04",
+      "context": "Projet personnel à partir de données ouvertes.",
+      "achievements": [
+        "Comparé 4 modèles de séries temporelles et publié l'analyse dans un carnet Jupyter"
+      ],
+      "skills": ["Python", "statsmodels", "Prophet"],
+      "url": "https://github.com/camille-exemple-fictif/velos"
+    }
+  ],
+  "certifications": [
+    {"name": "Certification cloud fondamentale (exemple)", "issuer": "Fournisseur cloud exemple", "date": "2025-12", "url": null}
+  ],
+  "awards": [
+    {"title": "2e place, hackathon data de l'école", "issuer": "École d'ingénieurs Exemple", "date": "2025-03", "description": "Équipe de 3, prédiction de la consommation énergétique d'un campus."}
+  ],
+  "volunteering": [
+    {"role": "Trésorière", "organization": "Association étudiante Exemple", "start": "2024-09", "end": "2025-06", "description": "Gestion d'un budget annuel de 15 000 euros."}
+  ],
+  "publications": [],
+  "languages": [
+    {"name": "Français", "level": "native", "certificate": ""},
+    {"name": "Anglais", "level": "c1_c2", "certificate": "TOEIC 945"},
+    {"name": "Espagnol", "level": "b1", "certificate": ""}
+  ],
+  "skills": [
+    {"category": "Langages", "items": ["Python", "SQL", "R"]},
+    {"category": "Machine learning", "items": ["scikit-learn", "PyTorch", "Hugging Face Transformers", "LightGBM"]},
+    {"category": "Outils", "items": ["Git", "Docker", "Airflow", "FastAPI"]}
+  ],
+  "interests": ["Course à pied", "Échecs"],
+  "extra_facts": []
+}

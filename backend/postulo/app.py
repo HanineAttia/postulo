@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from postulo import APP_NAME, __version__, config
-from postulo.api import health, jobs, llm, settings
+from postulo.api import health, jobs, llm, profile, settings
 from postulo.db.session import get_engine, init_db
 from postulo.services.jobs import JobManager
 from postulo.services.llm.base import LLMError, LLMErrorKind
@@ -83,7 +83,7 @@ def create_app(
             },
         )
 
-    for router in (health.router, settings.router, llm.router, jobs.router):
+    for router in (health.router, settings.router, llm.router, jobs.router, profile.router):
         app.include_router(router)
 
     _mount_frontend(app, frontend_dir if frontend_dir is not None else config.frontend_dist_dir())

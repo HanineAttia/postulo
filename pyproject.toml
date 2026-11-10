@@ -15,6 +15,12 @@ dependencies = [
     "sqlalchemy>=2.0.36",
     "alembic>=1.14",
     "httpx>=0.28",
+    "pypdfium2>=5.15.2",
+    "pyyaml>=6.0.3",
+    "jinja2>=3.1.6",
+    "anthropic>=2.7.0",
+    "keyring>=25.7.0",
+    "python-multipart>=0.0.33",
 ]
 
 [project.scripts]
@@ -25,6 +31,7 @@ dev = [
     "pytest>=8.3",
     "ruff>=0.8",
     "mypy>=1.13",
+    "types-pyyaml>=6.0.12.20261103",
 ]
 
 [build-system]
