@@ -149,5 +149,377 @@
     "generic": "Une erreur est survenue.",
     "server": "Le serveur Postulo ne répond pas. Vérifie qu'il est lancé, puis recharge la page.",
     "details": "Détails"
+  },
+  "validation": {
+    "invalid": "Valeur invalide.",
+    "date": "Format attendu : AAAA-MM (par exemple 2026-09) ou AAAA.",
+    "url": "Lien invalide.",
+    "email": "Adresse e-mail invalide.",
+    "phone": "Numéro de téléphone invalide.",
+    "integer": "Nombre entier attendu.",
+    "duration": "Entre 1 et 60 mois.",
+    "positive": "Le montant doit être positif.",
+    "salaryRange": "Le maximum doit être supérieur au minimum.",
+    "dateOrder": "La fin est avant le début."
+  },
+  "profile": {
+    "title": "Mon parcours",
+    "subtitle": "Tout ton parcours, saisi une fois. Pour chaque candidature, Postulo choisit les éléments utiles.",
+    "tabsLabel": "Sections du parcours",
+    "tabs": {
+      "import": "Import",
+      "identity": "Identité et liens",
+      "objective": "Objectif",
+      "education": "Formation",
+      "experiences": "Expériences",
+      "projects": "Projets",
+      "skills": "Compétences et langues",
+      "certifications": "Certifications et prix",
+      "engagements": "Engagements et publications",
+      "backup": "Sauvegarde"
+    },
+    "tabErrors_one": "{{count}} section à corriger",
+    "tabErrors_other": "{{count}} sections à corriger",
+    "datePlaceholder": "AAAA-MM",
+    "notSpecified": "Non précisé",
+    "yes": "Oui",
+    "no": "Non",
+    "untitled": "Sans titre",
+    "dragHandle": "Déplacer « {{title}} » (espace pour saisir, flèches pour déplacer)",
+    "hasErrors": "À corriger",
+    "moveUp": "Monter « {{title}} »",
+    "moveDown": "Descendre « {{title}} »",
+    "remove": "Supprimer « {{title}} »",
+    "addLink": "Ajouter un lien",
+    "removeLink": "Supprimer ce lien",
+    "unsaved": "Modifications non enregistrées",
+    "discard": "Annuler les modifications",
+    "save": "Enregistrer",
+    "saved": "Parcours enregistré.",
+    "reload": "Recharger",
+    "fixErrors": "Corrige les champs signalés avant d'enregistrer.",
+    "leaveConfirm": "Tu as des modifications non enregistrées. Quitter quand même ?",
+    "hints": {
+      "lines": "Un élément par ligne.",
+      "achievements": "Une réalisation par ligne : verbe d'action, action, résultat chiffré si possible.",
+      "ongoing": "Laisse vide si c'est en cours.",
+      "certificate": "Par exemple TOEIC 945 ou DELF B2.",
+      "zones": "Une région par ligne, ou « Toute la France ».",
+      "salary": "Facultatif, en euros bruts par an.",
+      "summary": "Deux ou trois phrases : qui tu es, ce que tu sais faire, ce que tu cherches.",
+      "extraFacts": "Prix, chiffres, engagements : tout fait vrai que Postulo peut utiliser."
+    },
+    "sections": {
+      "identity": {
+        "title": "Identité",
+        "description": "Tes coordonnées et tes liens professionnels."
+      },
+      "pitch": {
+        "title": "Titre et résumé",
+        "description": "Ce qui apparaît en haut de ton CV."
+      },
+      "links": {
+        "title": "Autres liens",
+        "description": "Blog, Kaggle, publications en ligne..."
+      },
+      "objective": {
+        "title": "Objectif",
+        "description": "Ce que tu cherches : Postulo s'en sert pour trier les offres et adapter tes candidatures."
+      },
+      "more": {
+        "title": "Centres d'intérêt et faits utiles",
+        "description": "Des éléments qui peuvent rendre une candidature plus personnelle."
+      },
+      "education": {
+        "title": "Formation",
+        "description": "Diplômes, écoles, cours clés.",
+        "add": "Ajouter une formation",
+        "empty": "Aucune formation pour l'instant."
+      },
+      "experiences": {
+        "title": "Expériences",
+        "description": "Stages, alternances, emplois, missions, recherche.",
+        "add": "Ajouter une expérience",
+        "empty": "Aucune expérience pour l'instant."
+      },
+      "projects": {
+        "title": "Projets",
+        "description": "Projets académiques, personnels, hackathons, open source.",
+        "add": "Ajouter un projet",
+        "empty": "Aucun projet pour l'instant. Deux projets au moins renforcent un CV."
+      },
+      "certifications": {
+        "title": "Certifications",
+        "description": "Certificats et attestations vérifiables.",
+        "add": "Ajouter une certification",
+        "empty": "Aucune certification."
+      },
+      "awards": {
+        "title": "Prix et distinctions",
+        "description": "Concours, bourses, classements.",
+        "add": "Ajouter un prix",
+        "empty": "Aucun prix."
+      },
+      "volunteering": {
+        "title": "Engagements",
+        "description": "Associations, bénévolat, responsabilités.",
+        "add": "Ajouter un engagement",
+        "empty": "Aucun engagement."
+      },
+      "publications": {
+        "title": "Publications",
+        "description": "Articles, rapports, communications.",
+        "add": "Ajouter une publication",
+        "empty": "Aucune publication."
+      },
+      "languages": {
+        "title": "Langues",
+        "description": "Niveau et certificat éventuel.",
+        "add": "Ajouter une langue",
+        "empty": "Aucune langue."
+      },
+      "skills": {
+        "title": "Compétences",
+        "description": "Regroupées par catégorie : langages, outils, méthodes...",
+        "add": "Ajouter une catégorie",
+        "empty": "Aucune compétence."
+      },
+      "interests": {
+        "title": "Centres d'intérêt"
+      },
+      "extra_facts": {
+        "title": "Faits utiles"
+      }
+    },
+    "fields": {
+      "main": {
+        "headline": "Titre",
+        "summary": "Résumé",
+        "interests": "Centres d'intérêt",
+        "extra_facts": "Faits utiles"
+      },
+      "identity": {
+        "first_name": "Prénom",
+        "last_name": "Nom",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "city": "Ville",
+        "mobility": "Mobilité",
+        "driving_license": "Permis de conduire",
+        "linkedin": "LinkedIn",
+        "github": "GitHub",
+        "portfolio": "Portfolio",
+        "links": "Autres liens"
+      },
+      "links": {
+        "label": "Libellé",
+        "url": "Lien"
+      },
+      "objective": {
+        "contract_type": "Type de contrat",
+        "level": "Niveau",
+        "domain": "Domaine",
+        "target_roles": "Postes visés",
+        "availability": "Disponibilité",
+        "duration_months": "Durée (mois)",
+        "remote_ok": "Télétravail accepté",
+        "zones": "Zones",
+        "salary_min": "Salaire minimum",
+        "salary_max": "Salaire maximum"
+      },
+      "education": {
+        "degree": "Diplôme",
+        "field": "Spécialité",
+        "school": "École",
+        "city": "Ville",
+        "start": "Début",
+        "end": "Fin",
+        "honors": "Mention ou rang",
+        "key_courses": "Cours clés",
+        "details": "Détails"
+      },
+      "experiences": {
+        "title": "Intitulé du poste",
+        "organization": "Organisation",
+        "type": "Type",
+        "city": "Ville",
+        "start": "Début",
+        "end": "Fin",
+        "context": "Contexte",
+        "achievements": "Réalisations",
+        "skills": "Compétences et outils"
+      },
+      "projects": {
+        "name": "Nom",
+        "type": "Type",
+        "start": "Début",
+        "end": "Fin",
+        "url": "Lien",
+        "context": "Contexte",
+        "achievements": "Réalisations",
+        "skills": "Compétences"
+      },
+      "certifications": {
+        "name": "Nom",
+        "issuer": "Organisme",
+        "date": "Date",
+        "url": "Lien de vérification"
+      },
+      "awards": {
+        "title": "Titre",
+        "issuer": "Organisme",
+        "date": "Date",
+        "description": "Description"
+      },
+      "volunteering": {
+        "role": "Rôle",
+        "organization": "Organisation",
+        "start": "Début",
+        "end": "Fin",
+        "description": "Description"
+      },
+      "publications": {
+        "title": "Titre",
+        "venue": "Support",
+        "date": "Date",
+        "url": "Lien"
+      },
+      "languages": {
+        "name": "Langue",
+        "level": "Niveau",
+        "certificate": "Certificat"
+      },
+      "skills": {
+        "category": "Catégorie",
+        "items": "Éléments"
+      }
+    }
+  },
+  "enums": {
+    "contractType": {
+      "internship": "Stage",
+      "apprenticeship": "Alternance",
+      "fixed_term": "CDD",
+      "permanent": "CDI",
+      "freelance": "Freelance"
+    },
+    "level": {
+      "student": "Étudiant",
+      "recent_graduate": "Jeune diplômé",
+      "junior": "Junior",
+      "experienced": "Confirmé",
+      "senior": "Senior"
+    },
+    "experienceType": {
+      "internship": "Stage",
+      "apprenticeship": "Alternance",
+      "permanent": "CDI",
+      "fixed_term": "CDD",
+      "freelance": "Freelance",
+      "student_job": "Job étudiant",
+      "mission": "Mission",
+      "research": "Recherche",
+      "volunteering": "Bénévolat"
+    },
+    "projectType": {
+      "academic": "Académique",
+      "personal": "Personnel",
+      "professional": "Professionnel",
+      "hackathon": "Hackathon",
+      "research": "Recherche",
+      "open_source": "Open source"
+    },
+    "languageLevel": {
+      "native": "Langue maternelle",
+      "bilingual": "Bilingue",
+      "c1_c2": "C1-C2",
+      "b2": "B2",
+      "b1": "B1",
+      "a1_a2": "A1-A2"
+    }
+  },
+  "completeness": {
+    "title": "Qualité du parcours",
+    "description": "Plus ton parcours est complet, plus tes candidatures seront précises.",
+    "complete": "Ton parcours est complet. Bravo.",
+    "advice": {
+      "name": "Indique ton prénom et ton nom",
+      "email": "Ajoute ton adresse e-mail",
+      "phone": "Ajoute ton numéro de téléphone",
+      "city": "Indique ta ville",
+      "linkedin": "Ajoute ton profil LinkedIn",
+      "portfolio": "Ajoute un GitHub, un portfolio ou un autre lien",
+      "headline": "Écris un titre de CV",
+      "summary": "Rédige un résumé de deux ou trois phrases",
+      "contract_type": "Précise le type de contrat recherché",
+      "target_roles": "Indique les postes visés",
+      "availability": "Indique ta date de disponibilité",
+      "zones": "Indique les zones qui t'intéressent",
+      "level": "Précise ton niveau",
+      "education": "Ajoute ta formation",
+      "experiences": "Ajoute au moins une expérience",
+      "quantified": "Chiffre davantage tes réalisations ({{count}} sur {{total}} contiennent un chiffre)",
+      "achievements": "Ajoute au moins deux réalisations par expérience ({{count}} à compléter)",
+      "projects": "Ajoute au moins deux projets ({{count}} pour l'instant)",
+      "skills": "Liste davantage de compétences ({{count}} pour l'instant)",
+      "languages": "Ajoute les langues que tu parles"
+    }
+  },
+  "import": {
+    "cvTitle": "Importer un CV",
+    "cvDescription": "Postulo lit ton CV, le structure avec l'IA, puis te montre ce qui change avant d'enregistrer. Rien n'est inventé : les champs absents restent vides.",
+    "chooseCv": "Choisis ton CV ou dépose-le ici",
+    "cvFormats": "PDF, DOCX ou TXT, 10 Mo au plus",
+    "uploading": "Lecture du fichier...",
+    "progressLabel": "Progression de l'import",
+    "steps": {
+      "extract": "Lecture du texte",
+      "structure": "Structuration par l'IA",
+      "compare": "Comparaison avec ton parcours"
+    },
+    "retry": "Choisir un autre fichier",
+    "warningsTitle": "Points d'attention",
+    "modeLabel": "Que faire de ces informations ?",
+    "mode": {
+      "merge": "Ajouter à ma bibliothèque",
+      "replace": "Remplacer mon parcours"
+    },
+    "modeHint": {
+      "merge": "Fusion sans doublons : les champs déjà remplis sont conservés.",
+      "replace": "Ton parcours actuel est remplacé par le contenu importé."
+    },
+    "previewTitle": "Aperçu des changements",
+    "nothingNew": "Rien de nouveau : tout est déjà dans ton parcours.",
+    "added_one": "{{count}} ajout",
+    "added_other": "{{count}} ajouts",
+    "updated_one": "{{count}} complété",
+    "updated_other": "{{count}} complétés",
+    "unchanged_one": "{{count}} identique",
+    "unchanged_other": "{{count}} identiques",
+    "removed_one": "{{count}} remplacé",
+    "removed_other": "{{count}} remplacés",
+    "filledFields": "Champs complétés",
+    "keptFields": "Champs conservés (ta version est gardée)",
+    "applyMerge": "Fusionner",
+    "applyReplace": "Remplacer",
+    "cancel": "Annuler",
+    "unsavedChanges": "Enregistre ou annule tes modifications en cours avant d'importer.",
+    "mergedToast": "Import fusionné dans ton parcours.",
+    "replacedToast": "Parcours remplacé par l'import."
+  },
+  "backup": {
+    "exportTitle": "Exporter",
+    "exportDescription": "Télécharge une copie complète de ton parcours, à garder en lieu sûr.",
+    "export": "Télécharger en {{format}}",
+    "restoreTitle": "Restaurer une sauvegarde",
+    "restoreDescription": "Importe un fichier exporté par Postulo. Tu verras un aperçu avant d'enregistrer.",
+    "chooseFile": "Choisis un fichier de sauvegarde",
+    "formats": "JSON ou YAML",
+    "sampleTitle": "Profil d'exemple",
+    "sampleDescription": "Charge « Camille Exemple », un profil fictif d'élève ingénieure data et IA, pour découvrir Postulo.",
+    "sampleLoad": "Charger le profil d'exemple",
+    "sampleConfirm": "Oui, remplacer mon parcours",
+    "sampleWarning": "Ton parcours actuel sera remplacé.",
+    "sampleLoaded": "Profil d'exemple chargé."
   }
 }

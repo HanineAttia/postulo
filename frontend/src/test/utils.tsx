@@ -9,6 +9,8 @@ import type { Job, LLMStatus } from "@/lib/api";
 
 export const DEMO_STATUS: LLMStatus = {
   provider: "mock",
+  model: null,
+  has_api_key: false,
   demo_mode: true,
   available: true,
   reason: "Mode démo",

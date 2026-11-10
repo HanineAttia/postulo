@@ -32,11 +32,20 @@ export interface ButtonProps
   asChild?: boolean;
 }
 
-export function Button({ className, variant, size, asChild = false, ...props }: ButtonProps) {
+export function Button({
+  className,
+  variant,
+  size,
+  asChild = false,
+  type,
+  ...props
+}: ButtonProps) {
   const Comp = asChild ? Slot.Root : "button";
   return (
     <Comp
       data-slot="button"
+      // Never submit a surrounding form by accident: submit buttons say so explicitly.
+      type={asChild ? type : (type ?? "button")}
       className={cn(buttonVariants({ variant, size }), className)}
       {...props}
     />

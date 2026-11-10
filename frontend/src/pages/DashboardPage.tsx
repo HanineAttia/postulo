@@ -6,9 +6,13 @@ import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DemoJobCard } from "@/features/jobs/DemoJobCard";
+import { CompletenessCard } from "@/features/profile/CompletenessCard";
+import { useProfile } from "@/features/profile/useProfile";
 
 export function DashboardPage() {
   const { t } = useTranslation();
+  const profile = useProfile();
+  const hasProfile = (profile.data?.version ?? 0) > 0;
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
@@ -16,6 +20,7 @@ export function DashboardPage() {
         <p className="text-sm text-muted">{t("dashboard.subtitle")}</p>
       </div>
 
+      {hasProfile ? null : (
       <EmptyState
         icon={Sparkles}
         title={t("dashboard.empty.title")}
@@ -26,9 +31,11 @@ export function DashboardPage() {
           </Button>
         }
       />
+      )}
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="flex flex-col gap-6 lg:col-span-2">
+          {hasProfile ? <CompletenessCard /> : null}
           <DemoJobCard />
         </div>
         <Card aria-labelledby="today-title">
