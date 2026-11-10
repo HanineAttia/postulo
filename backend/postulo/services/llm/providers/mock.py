@@ -12,6 +12,11 @@ from collections.abc import Callable, Mapping
 from typing import Any
 
 from postulo.services.llm.base import parse_task
+from postulo.services.llm.providers.mock_application import (
+    mock_application_draft,
+    mock_application_revision,
+    mock_jury,
+)
 from postulo.services.llm.providers.mock_cv import mock_cv_extract
 
 Responder = Callable[[str], str]
@@ -32,6 +37,9 @@ DEFAULT_RESPONSES: dict[str, Responder] = {
         }
     ),
     "cv_extract": mock_cv_extract,
+    "application_draft": mock_application_draft,
+    "application_revision": mock_application_revision,
+    "jury": mock_jury,
 }
 
 

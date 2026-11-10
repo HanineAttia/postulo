@@ -1,0 +1,23 @@
+Stage de fin d'études - Data scientist (H/F)
+Entreprise : Énergie Exemple
+Lieu : Paris (75), télétravail partiel
+Contrat : stage de 6 mois, à partir de février 2027
+
+Énergie Exemple est un fournisseur fictif d'électricité verte (offre d'exemple du mode démo de Postulo).
+Notre équipe Data de 15 personnes conçoit les modèles de prévision de la consommation et de détection
+d'anomalies utilisés par 2 millions de clients.
+
+Vos missions :
+- Développer des modèles de machine learning pour prévoir la consommation d'électricité (séries temporelles).
+- Détecter les anomalies et les fraudes sur les relevés de compteurs.
+- Industrialiser les modèles avec l'équipe MLOps : pipelines Airflow, conteneurs Docker, API FastAPI.
+- Présenter vos résultats aux équipes métier et documenter vos travaux.
+
+Profil recherché :
+- École d'ingénieurs ou master en data science, intelligence artificielle ou statistiques.
+- Maîtrise de Python, SQL et des bibliothèques scikit-learn, Pandas ; PyTorch apprécié.
+- Connaissance de Git et des bonnes pratiques de développement.
+- Une première expérience avec Spark ou un cloud public (Azure, AWS) est un plus.
+- Anglais professionnel.
+
+Rémunération : 1 400 euros bruts par mois.
