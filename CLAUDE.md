@@ -259,6 +259,9 @@ empty fields, unites lists, and never overwrites a filled field ("kept").
 - Achievement coach (SPEC 6.2: reformulate weak bullets by asking for the missing figure) is not done;
   it needs the prompt work of phase 2.
 - Encrypted local fallback for secrets when no keyring backend exists (SPEC 2.3).
+- `TODO(verify)`: the HTML engine fails to print with headless Chrome/Edge on the Ubuntu CI runner
+  (cause unknown, no stderr); it is verified on Windows with Edge. Its real-browser test only runs
+  on Windows in CI. Do not add `--no-sandbox` to work around it.
 - `TODO(latex)`: the optional LaTeX engine (SPEC 7.5) is not implemented; DOCX export is phase 6.
 - Phase 2 acceptance with a real provider and a real pasted offer is still to be run by the
   maintainer (uses quota). Prompts `application_draft`, `application_revision` and `jury` are

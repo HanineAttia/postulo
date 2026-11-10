@@ -172,5 +172,6 @@ def _print(doc: Document, kind: DocKind, browser: list[str] | None) -> bytes:
             ) from exc
         if not pdf_file.is_file():
             stderr = completed.stderr.decode("utf-8", "replace")[-500:]
-            raise RenderError("Le navigateur n'a pas pu produire le PDF.", detail=stderr)
+            detail = f"{prefix[0]} exited with {completed.returncode}: {stderr}"
+            raise RenderError("Le navigateur n'a pas pu produire le PDF.", detail=detail)
         return pdf_file.read_bytes()
