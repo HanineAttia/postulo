@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUTF8: "1"
+  FORCE_COLOR: "1"
+
+jobs:
+  backend:
+    name: Backend (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          python-version: "3.13"
+          enable-cache: true
+      - run: uv sync --locked
+      - name: Ruff (lint)
+        run: uv run ruff check .
+      - name: Ruff (format)
+        run: uv run ruff format --check .
+      - name: Mypy
+        run: uv run mypy
+      - name: Pytest (no network)
+        run: uv run pytest
+
+  frontend:
+    name: Frontend (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+
+  e2e:
+    name: End-to-end, demo mode (${{ matrix.os }})
+    needs: [backend, frontend]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          python-version: "3.13"
+          enable-cache: true
+      - run: uv sync --locked
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+        working-directory: frontend
+      - run: pnpm build
+        working-directory: frontend
+      - run: pnpm exec playwright install --with-deps chromium
+        working-directory: frontend
+      - run: pnpm e2e
+        working-directory: frontend
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report-${{ matrix.os }}
+          path: |
+            frontend/playwright-report
+            frontend/test-results
+          retention-days: 7
