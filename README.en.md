@@ -1,6 +1,6 @@
 # Postulo
 
-> Work in progress (phase 0: foundations). Provisional name.
+> Work in progress (phase 1: career library). Provisional name.
 
 Postulo is a **free, open source, local-first** assistant for finding an internship, apprenticeship,
 fixed-term or permanent job, or freelance mission in France, in any field: a single career library,
@@ -25,6 +25,17 @@ uv run postulo
 
 The server listens on `127.0.0.1` only and opens your browser. The first launch runs in **demo mode**
 (simulated AI, no account needed).
+
+A 5-step welcome wizard helps you choose the AI, import your CV and set your goal (skippable).
+
+What works today (phase 1):
+- **My career** page: full forms for every section, drag-and-drop ordering, completeness score with advice,
+  JSON/YAML backup and restore, fictional sample profile.
+- **CV import** (PDF, DOCX, TXT): text extraction, AI structuring, preview of the changes, then merge
+  without duplicates or replace. Scanned PDFs are detected. Nothing is invented.
+- **AI providers**: demo (default, simulated), Anthropic API with your own key (stored in the system
+  keyring; default model Claude Sonnet 5.5), and Claude Code CLI (personal use only, off by default,
+  runs in an empty temporary folder with no tools; check Anthropic's terms before enabling it).
 
 Windows users: Smart App Control may block compiled Python libraries. See
 [docs/dev-windows.md](docs/dev-windows.md) (in French).
