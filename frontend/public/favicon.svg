@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Postulo">
+  <rect width="64" height="64" rx="15" fill="#1D4E89"/>
+  <path d="M23 47V17h10.5a9.5 9.5 0 0 1 0 19H23" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="44.5" cy="45" r="4.5" fill="#7FB3F0"/>
+</svg>

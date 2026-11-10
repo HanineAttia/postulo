@@ -1,0 +1,153 @@
+{
+  "app": {
+    "name": "Postulo",
+    "skipToContent": "Aller au contenu"
+  },
+  "nav": {
+    "mainLabel": "Navigation principale",
+    "groups": {
+      "find": "Trouver",
+      "apply": "Candidater",
+      "prepare": "Se préparer",
+      "mySpace": "Mon espace"
+    },
+    "dashboard": "Tableau de bord",
+    "offers": "Offres",
+    "hiddenMarket": "Marché caché",
+    "organizations": "Organisations",
+    "workshop": "Atelier",
+    "tracking": "Suivi",
+    "network": "LinkedIn et réseau",
+    "coach": "Coach d'entretien",
+    "profile": "Mon parcours",
+    "settings": "Réglages",
+    "collapse": "Replier la barre latérale",
+    "expand": "Déplier la barre latérale"
+  },
+  "header": {
+    "search": "Rechercher",
+    "searchSoon": "La recherche globale arrive bientôt.",
+    "aiCalls_one": "{{count}} appel IA aujourd'hui",
+    "aiCalls_other": "{{count}} appels IA aujourd'hui",
+    "demoMode": "Mode démo",
+    "demoModeHint": "L'IA est simulée : aucun compte n'est nécessaire, aucun quota n'est consommé.",
+    "providerUnavailable": "Fournisseur IA indisponible",
+    "theme": {
+      "label": "Thème",
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    },
+    "language": "Langue",
+    "languages": {
+      "fr": "Français",
+      "en": "English"
+    }
+  },
+  "providers": {
+    "mock": "Démo",
+    "claude_code_cli": "Claude Code",
+    "anthropic_api": "API Anthropic",
+    "openai_compatible": "Compatible OpenAI"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Ton point de départ pour chaque journée de recherche.",
+    "empty": {
+      "title": "Ton espace est prêt",
+      "description": "Commence par ton parcours : formation, expériences, projets. Tu le saisis une seule fois, puis Postulo s'en sert pour chaque candidature.",
+      "action": "Compléter mon parcours"
+    },
+    "today": {
+      "title": "À faire aujourd'hui",
+      "empty": "Rien pour l'instant. Les relances, offres et signaux apparaîtront ici."
+    }
+  },
+  "demoJob": {
+    "title": "Tâche de démonstration",
+    "description": "Simule la préparation d'une candidature, étape par étape. Les vraies tâches suivront ce modèle.",
+    "start": "Lancer la démonstration",
+    "restart": "Relancer",
+    "starting": "Démarrage...",
+    "progressLabel": "Progression de la tâche",
+    "steps": {
+      "draft": "Rédaction",
+      "layout": "Mise en page",
+      "ats_check": "Contrôle ATS",
+      "jury": "Jury",
+      "revision": "Correction"
+    },
+    "stepStatus": {
+      "pending": "En attente",
+      "running": "En cours",
+      "done": "Terminé",
+      "failed": "Échec"
+    },
+    "status": {
+      "pending": "En attente",
+      "running": "En cours : {{step}}",
+      "succeeded": "Terminé. Note simulée : {{score}}/100.",
+      "failed": "La tâche a échoué.",
+      "interrupted": "La tâche a été interrompue."
+    },
+    "connectionLost": "Connexion perdue avec le serveur. Nouvelle tentative..."
+  },
+  "pages": {
+    "comingSoon": "Disponible en phase {{phase}}",
+    "offers": {
+      "title": "Offres",
+      "description": "Les offres de France Travail, des sites carrières et de tes alertes e-mail, triées et notées selon ton parcours.",
+      "action": "Compléter mon parcours d'abord"
+    },
+    "hiddenMarket": {
+      "title": "Marché caché",
+      "description": "Signaux d'embauche, viviers de talents et chemins de cooptation, pour être contacté avant la publication des offres.",
+      "action": "Compléter mon parcours d'abord"
+    },
+    "organizations": {
+      "title": "Organisations",
+      "description": "Tes organisations cibles, leur page carrières et leur score de chaleur.",
+      "action": "Compléter mon parcours d'abord"
+    },
+    "workshop": {
+      "title": "Atelier",
+      "description": "Un CV et une lettre adaptés à chaque offre, compatibles ATS et relus par un jury simulé.",
+      "action": "Voir la démonstration"
+    },
+    "tracking": {
+      "title": "Suivi",
+      "description": "Tes candidatures en tableau ou en Kanban, tes relances et tes statistiques.",
+      "action": "Retour au tableau de bord"
+    },
+    "network": {
+      "title": "LinkedIn et réseau",
+      "description": "Un profil LinkedIn aligné sur les recherches des recruteurs, et des messages de réseau prêts à relire.",
+      "action": "Compléter mon parcours d'abord"
+    },
+    "coach": {
+      "title": "Coach d'entretien",
+      "description": "Une fiche de préparation et des simulations d'entretien RH et techniques, question par question.",
+      "action": "Compléter mon parcours d'abord"
+    },
+    "profile": {
+      "title": "Mon parcours",
+      "description": "Ta bibliothèque complète : formation, expériences, projets, compétences, langues. Saisie une seule fois.",
+      "action": "Retour au tableau de bord"
+    },
+    "settings": {
+      "title": "Réglages",
+      "description": "Fournisseur IA, recherche, documents, sources, relances et données.",
+      "action": "Retour au tableau de bord"
+    }
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "Cette adresse ne correspond à aucune page de Postulo.",
+    "action": "Retour au tableau de bord"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue.",
+    "server": "Le serveur Postulo ne répond pas. Vérifie qu'il est lancé, puis recharge la page.",
+    "details": "Détails"
+  }
+}

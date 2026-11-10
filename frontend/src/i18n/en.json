@@ -1,0 +1,153 @@
+{
+  "app": {
+    "name": "Postulo",
+    "skipToContent": "Skip to content"
+  },
+  "nav": {
+    "mainLabel": "Main navigation",
+    "groups": {
+      "find": "Find",
+      "apply": "Apply",
+      "prepare": "Prepare",
+      "mySpace": "My space"
+    },
+    "dashboard": "Dashboard",
+    "offers": "Job offers",
+    "hiddenMarket": "Hidden market",
+    "organizations": "Organizations",
+    "workshop": "Workshop",
+    "tracking": "Tracking",
+    "network": "LinkedIn and network",
+    "coach": "Interview coach",
+    "profile": "My background",
+    "settings": "Settings",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar"
+  },
+  "header": {
+    "search": "Search",
+    "searchSoon": "Global search is coming soon.",
+    "aiCalls_one": "{{count}} AI call today",
+    "aiCalls_other": "{{count}} AI calls today",
+    "demoMode": "Demo mode",
+    "demoModeHint": "AI is simulated: no account needed, no quota used.",
+    "providerUnavailable": "AI provider unavailable",
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "language": "Language",
+    "languages": {
+      "fr": "Français",
+      "en": "English"
+    }
+  },
+  "providers": {
+    "mock": "Demo",
+    "claude_code_cli": "Claude Code",
+    "anthropic_api": "Anthropic API",
+    "openai_compatible": "OpenAI compatible"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your starting point for every day of job searching.",
+    "empty": {
+      "title": "Your space is ready",
+      "description": "Start with your background: education, experience, projects. You enter it once, then Postulo uses it for every application.",
+      "action": "Complete my background"
+    },
+    "today": {
+      "title": "To do today",
+      "empty": "Nothing yet. Follow-ups, offers and signals will show up here."
+    }
+  },
+  "demoJob": {
+    "title": "Demo task",
+    "description": "Simulates preparing an application, step by step. Real tasks will follow this model.",
+    "start": "Run the demo",
+    "restart": "Run again",
+    "starting": "Starting...",
+    "progressLabel": "Task progress",
+    "steps": {
+      "draft": "Drafting",
+      "layout": "Layout",
+      "ats_check": "ATS check",
+      "jury": "Jury",
+      "revision": "Revision"
+    },
+    "stepStatus": {
+      "pending": "Waiting",
+      "running": "Running",
+      "done": "Done",
+      "failed": "Failed"
+    },
+    "status": {
+      "pending": "Waiting",
+      "running": "Running: {{step}}",
+      "succeeded": "Done. Simulated score: {{score}}/100.",
+      "failed": "The task failed.",
+      "interrupted": "The task was interrupted."
+    },
+    "connectionLost": "Lost connection to the server. Retrying..."
+  },
+  "pages": {
+    "comingSoon": "Available in phase {{phase}}",
+    "offers": {
+      "title": "Job offers",
+      "description": "Offers from France Travail, career sites and your e-mail alerts, sorted and scored against your background.",
+      "action": "Complete my background first"
+    },
+    "hiddenMarket": {
+      "title": "Hidden market",
+      "description": "Hiring signals, talent pools and referral paths, to be contacted before offers are published.",
+      "action": "Complete my background first"
+    },
+    "organizations": {
+      "title": "Organizations",
+      "description": "Your target organizations, their career page and their warmth score.",
+      "action": "Complete my background first"
+    },
+    "workshop": {
+      "title": "Workshop",
+      "description": "A resume and cover letter tailored to each offer, ATS-friendly and reviewed by a simulated jury.",
+      "action": "See the demo"
+    },
+    "tracking": {
+      "title": "Tracking",
+      "description": "Your applications as a table or Kanban board, your follow-ups and your statistics.",
+      "action": "Back to dashboard"
+    },
+    "network": {
+      "title": "LinkedIn and network",
+      "description": "A LinkedIn profile aligned with recruiter searches, and networking messages ready to review.",
+      "action": "Complete my background first"
+    },
+    "coach": {
+      "title": "Interview coach",
+      "description": "A preparation sheet and HR and technical interview simulations, one question at a time.",
+      "action": "Complete my background first"
+    },
+    "profile": {
+      "title": "My background",
+      "description": "Your complete library: education, experience, projects, skills, languages. Entered once.",
+      "action": "Back to dashboard"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "AI provider, search, documents, sources, follow-ups and data.",
+      "action": "Back to dashboard"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "This address does not match any Postulo page.",
+    "action": "Back to dashboard"
+  },
+  "errors": {
+    "generic": "Something went wrong.",
+    "server": "The Postulo server is not responding. Check that it is running, then reload the page.",
+    "details": "Details"
+  }
+}
