@@ -5,14 +5,27 @@ from __future__ import annotations
 from datetime import date
 from typing import Literal
 
-from fastapi import APIRouter, HTTPException, UploadFile, status
+from fastapi import APIRouter, HTTPException, Request, UploadFile, status
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import Response
 from pydantic import BaseModel
 
+from postulo.config import load_settings
+from postulo.services.jobs import JobManager, JobRead
+from postulo.services.llm import registry
+from postulo.services.llm.base import LLMError, LLMErrorKind
 from postulo.services.profile import store
 from postulo.services.profile.backup import BackupError, BackupFormat, export_profile, parse_backup
 from postulo.services.profile.completeness import Completeness, compute_completeness
-from postulo.services.profile.merge import ImportDiff, describe_replace, merge_profiles
+from postulo.services.profile.cv_import import (
+    CV_IMPORT_JOB_TYPE,
+    CV_IMPORT_STEPS,
+    CVImportError,
+    extract_text,
+    make_cv_import_job,
+)
+from postulo.services.profile.merge import merge_profiles
+from postulo.services.profile.preview import ImportPreview, build_preview
 from postulo.services.profile.sample import sample_profile
 from postulo.services.profile.schema import CareerProfile
 
@@ -34,32 +47,10 @@ class SampleRequest(BaseModel):
     force: bool = False
 
 
-class ImportPreview(BaseModel):
-    """What an import would change. Nothing is saved until /apply."""
-
-    base_version: int
-    incoming: CareerProfile
-    merge_diff: ImportDiff
-    replace_diff: ImportDiff
-    warnings: list[str]
-
-
 class ApplyImport(BaseModel):
     mode: Literal["merge", "replace"]
     incoming: CareerProfile
     version: int
-
-
-def build_preview(incoming: CareerProfile, warnings: list[str]) -> ImportPreview:
-    current = store.get_profile()
-    _merged, merge_diff = merge_profiles(current.profile, incoming)
-    return ImportPreview(
-        base_version=current.version,
-        incoming=incoming,
-        merge_diff=merge_diff,
-        replace_diff=describe_replace(current.profile, incoming),
-        warnings=warnings,
-    )
 
 
 def _save(profile: CareerProfile, version: int) -> store.StoredProfile:
@@ -137,3 +128,21 @@ def apply_import(body: ApplyImport) -> store.StoredProfile:
     else:
         result, _diff = merge_profiles(current.profile, body.incoming)
     return _save(result, body.version)
+
+
+@router.post("/import-cv", status_code=status.HTTP_202_ACCEPTED)
+async def import_cv(file: UploadFile, request: Request) -> JobRead:
+    """Extract the CV text now (fast errors), then structure it with the AI in a job."""
+    content = await read_upload(file)
+    try:
+        text = await run_in_threadpool(extract_text, file.filename or "", content)
+    except CVImportError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
+    settings = load_settings()
+    provider = registry.get_provider(settings)
+    available, reason = provider.available()
+    if not available:
+        raise LLMError(LLMErrorKind.NOT_AVAILABLE, reason)
+    manager: JobManager = request.app.state.jobs
+    job = make_cv_import_job(text, provider, timeout=settings.ai.timeout_seconds)
+    return manager.start(CV_IMPORT_JOB_TYPE, CV_IMPORT_STEPS, job)
