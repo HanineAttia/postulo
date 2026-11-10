@@ -11,7 +11,8 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
-from sqlalchemy import JSON, Column, DateTime
+from sqlalchemy import JSON, Column, DateTime, Dialect
+from sqlalchemy.types import TypeDecorator
 from sqlmodel import Field, SQLModel
 
 
@@ -19,8 +20,29 @@ def utcnow() -> datetime:
     return datetime.now(UTC)
 
 
+class UTCDateTime(TypeDecorator[datetime]):
+    """Store datetimes as UTC and always return timezone-aware values.
+
+    SQLite has no timezone support: without this, values come back naive and the
+    frontend would read them as local time.
+    """
+
+    impl = DateTime(timezone=True)
+    cache_ok = True
+
+    def process_bind_param(self, value: datetime | None, dialect: Dialect) -> datetime | None:
+        if value is None:
+            return None
+        if value.tzinfo is None:
+            raise ValueError("Naive datetimes are not allowed; use postulo.db.models.utcnow().")
+        return value.astimezone(UTC).replace(tzinfo=None)
+
+    def process_result_value(self, value: datetime | None, dialect: Dialect) -> datetime | None:
+        return None if value is None else value.replace(tzinfo=UTC)
+
+
 def _ts(nullable: bool = False, index: bool = False) -> Any:
-    return Column(DateTime(timezone=True), nullable=nullable, index=index)
+    return Column(UTCDateTime(), nullable=nullable, index=index)
 
 
 class JobStatus(StrEnum):

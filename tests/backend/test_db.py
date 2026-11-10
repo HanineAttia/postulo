@@ -60,6 +60,20 @@ def test_running_jobs_are_interrupted_on_startup(migrated_db: Path) -> None:
         assert done.status is JobStatus.SUCCEEDED
 
 
+def test_datetimes_come_back_timezone_aware(migrated_db: Path) -> None:
+    from datetime import UTC, datetime, timedelta, timezone
+
+    paris = timezone(timedelta(hours=1))
+    with Session(db_session.get_engine()) as s:
+        s.add(Job(id="tz", type="demo", created_at=datetime(2026, 11, 10, 12, 0, tzinfo=paris)))
+        s.commit()
+    with Session(db_session.get_engine()) as s:
+        job = s.get(Job, "tz")
+        assert job is not None
+        assert job.created_at == datetime(2026, 11, 10, 11, 0, tzinfo=UTC)
+        assert job.created_at.tzinfo is UTC
+
+
 def test_llm_usage_insert(migrated_db: Path) -> None:
     with Session(db_session.get_engine()) as s:
         s.add(LLMUsage(provider="mock", task="demo", duration_ms=3, success=True))

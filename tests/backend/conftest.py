@@ -23,3 +23,8 @@ def postulo_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Pa
 def migrated_db(postulo_home: Path) -> Path:
     db_session.init_db()
     return postulo_home / "postulo.db"
+
+
+@pytest.fixture
+def anyio_backend() -> str:
+    return "asyncio"
