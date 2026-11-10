@@ -104,11 +104,24 @@ def mock_application_draft(prompt: str) -> str:
         library.get("skills", []),
         key=lambda g: -sum(_has(offer_norm, i) for i in g.get("items", [])),
     )
+    # Tools named in the offer and used in an experience or project, but missing from the
+    # skill groups, join the most relevant group (they come from the library: still honest).
+    grouped = {_norm(i) for g in groups for i in g.get("items", [])}
+    extra = [s for s in found if _norm(s) not in grouped]
+    if groups and extra:
+        groups[0] = {**groups[0], "items": [*groups[0].get("items", []), *extra]}
     title = _title(offer, library)
     organization = _organization(offer)
 
     achievements = [a for r in refs["E"] + refs["P"] for a in items[r].get("achievements", [])]
-    proofs = " ".join(achievements[:3]) or "Mes expériences m'ont appris à livrer des résultats."
+    # Bullets start with a past participle ("Conçu un modèle..."): "j'ai" makes them a sentence.
+    facts = [a.rstrip(" .") for a in achievements[:2]]
+    facts = [f[:1].lower() + f[1:] for f in facts]
+    proofs = (
+        f"J'ai par exemple {' et '.join(facts)}."
+        if facts
+        else "Mes expériences m'ont appris à livrer des résultats."
+    )
     where = organization or "votre organisation"
     letter = [
         f"Votre offre « {title} » a retenu toute mon attention. Elle décrit un poste où la "
@@ -121,7 +134,8 @@ def mock_application_draft(prompt: str) -> str:
         "réalisations m'ont appris à travailler avec des équipes métier, à documenter mon "
         "travail et à présenter des résultats clairs à des personnes qui ne sont pas "
         "spécialistes. Elles m'ont aussi appris à mesurer l'effet réel d'un modèle avant de le "
-        "déployer.",
+        "déployer, et à organiser mon travail en équipe sur des projets exigeants, avec des "
+        "délais courts et des priorités qui évoluent.",
         "Je peux mettre cette expérience au service de vos projets dès la date de démarrage "
         "prévue, avec la même exigence de qualité et de transparence. Je souhaite "
         "vous présenter mes travaux plus en détail et d'échanger sur vos priorités lors d'un "

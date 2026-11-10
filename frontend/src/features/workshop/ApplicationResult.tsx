@@ -205,7 +205,7 @@ function DocumentsPanel({ detail }: { detail: ApplicationDetail }) {
       {url ? (
         <iframe
           title={t(`workshop.documents.${kind}`)}
-          src={`${url}?v=${version}`}
+          src={`${url}?v=${version}#view=FitH`}
           className="h-[780px] w-full rounded-lg border border-border bg-surface"
           data-testid="pdf-preview"
         />
