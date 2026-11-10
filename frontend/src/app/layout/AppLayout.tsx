@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router";
+
+import { useSettings } from "@/features/settings/useSettings";
 
 import { readPreference, writePreference } from "@/lib/preferences";
 
@@ -10,6 +12,7 @@ import { Sidebar } from "./Sidebar";
 export function AppLayout() {
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(() => readPreference("sidebar") === "collapsed");
+  const settings = useSettings();
 
   const toggle = () => {
     setCollapsed((value) => {
@@ -17,6 +20,9 @@ export function AppLayout() {
       return !value;
     });
   };
+
+  // First launch: the onboarding wizard comes first (it can be skipped in one click).
+  if (settings.data && !settings.data.onboarding_completed) return <Navigate to="/welcome" replace />;
 
   return (
     <div className="flex min-h-screen bg-background">

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 import type { NavItem } from "../app/navigation";
 
-type PlaceholderKey = Exclude<NavItem["key"], "dashboard" | "profile">;
+type PlaceholderKey = Exclude<NavItem["key"], "dashboard" | "profile" | "settings">;
 
 const ACTION_TARGET: Record<PlaceholderKey, string> = {
   offers: "/profile",
@@ -17,7 +17,6 @@ const ACTION_TARGET: Record<PlaceholderKey, string> = {
   tracking: "/",
   network: "/profile",
   coach: "/profile",
-  settings: "/",
 };
 
 /** Page shell for features delivered in later phases: explains the page, offers a next step. */

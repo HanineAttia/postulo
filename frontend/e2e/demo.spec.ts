@@ -1,5 +1,11 @@
 import { expect, test } from "@playwright/test";
 
+import { completeOnboarding } from "./helpers";
+
+test.beforeEach(async ({ request }) => {
+  await completeOnboarding(request);
+});
+
 test("home shows a clean empty state in demo mode", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveTitle("Postulo");
@@ -31,8 +37,8 @@ test("the demo job shows live progress until it finishes", async ({ page }) => {
 });
 
 test("client-side routes work when loaded directly", async ({ page }) => {
-  await page.goto("/settings");
-  await expect(page.getByRole("heading", { level: 1, name: "Réglages" })).toBeVisible();
-  await page.getByRole("link", { name: "Retour au tableau de bord" }).click();
+  await page.goto("/workshop");
+  await expect(page.getByRole("heading", { level: 1, name: "Atelier" })).toBeVisible();
+  await page.getByRole("link", { name: "Voir la démonstration" }).click();
   await expect(page).toHaveURL(/\/$/);
 });

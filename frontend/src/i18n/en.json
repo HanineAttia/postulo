@@ -521,5 +521,93 @@
     "sampleConfirm": "Yes, replace my career",
     "sampleWarning": "Your current career will be replaced.",
     "sampleLoaded": "Sample profile loaded."
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Choose your AI provider. Other settings arrive with the next phases.",
+    "ai": {
+      "title": "Artificial intelligence",
+      "description": "Postulo uses the AI of your choice to structure your CV and prepare your applications.",
+      "providerLabel": "Provider",
+      "descriptions": {
+        "mock": "Simulated answers, no account, no cost. Ideal to discover the app.",
+        "anthropic_api": "Your own Anthropic API key. Pay-as-you-go billing on your account.",
+        "claude_code_cli": "Claude Code installed and logged in on this computer.",
+        "openai_compatible": "OpenAI-compatible endpoint, for example a local model."
+      },
+      "personalUse": "Personal use",
+      "termsNote": "Off by default, for personal use only. Anthropic's terms restrict using a Claude subscription inside third-party products: check them before enabling this option.",
+      "model": "Model",
+      "modelDefault": "Leave empty to use {{model}}.",
+      "modelCliHint": "Leave empty for Claude Code's default model (sonnet, opus...).",
+      "timeout": "Timeout (seconds)",
+      "timeoutHint": "Beyond this, the call is stopped. 300 seconds by default.",
+      "apiKey": "Anthropic API key",
+      "apiKeyHint": "Stored in your system credential manager, never in a file and never displayed.",
+      "saveKey": "Save the key",
+      "keySaved": "Key saved.",
+      "keyStored": "A key is stored.",
+      "deleteKey": "Delete the key",
+      "test": "Test the connection",
+      "testCost": "The test sends a very short message (one AI call).",
+      "save": "Save",
+      "saved": "Settings saved.",
+      "duration": "({{seconds}} s)"
+    },
+    "more": {
+      "title": "Getting started",
+      "description": "Run the welcome wizard again whenever you like.",
+      "onboarding": "Open the wizard"
+    }
+  },
+  "onboarding": {
+    "title": "Welcome to Postulo",
+    "subtitle": "Five quick steps to get started. You can skip everything and come back later.",
+    "skipAll": "Skip the wizard",
+    "stepsLabel": "Wizard steps",
+    "navLabel": "Wizard navigation",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "saveAndContinue": "Save and continue",
+    "steps": {
+      "ai": {
+        "short": "AI",
+        "title": "Choose your AI provider",
+        "description": "Test the connection, or stay in demo mode to discover the app without an account."
+      },
+      "profile": {
+        "short": "Career",
+        "title": "Your career",
+        "description": "Import your CV, fill in the forms, or start with a sample profile."
+      },
+      "objective": {
+        "short": "Goal",
+        "title": "Your goal",
+        "description": "Contract, level, field, roles, availability, areas: Postulo uses them to sort offers."
+      },
+      "sources": {
+        "short": "Sources",
+        "title": "Job sources",
+        "description": "France Travail, career pages, email alerts.",
+        "soonTitle": "Sources are coming soon",
+        "soonDescription": "Searching offers on authorized sources arrives in the next phase. Nothing to do for now."
+      },
+      "organizations": {
+        "short": "Organizations",
+        "title": "Target organizations",
+        "description": "The companies and labs you want to follow.",
+        "soonTitle": "Suggestions are coming soon",
+        "soonDescription": "Postulo will suggest organizations to follow based on your career. Nothing to do for now."
+      }
+    },
+    "profile": {
+      "import": "Import my CV",
+      "importHint": "PDF, DOCX or TXT. You check everything before saving.",
+      "forms": "Fill in later",
+      "formsHint": "You will complete your career in \"My career\".",
+      "sample": "Sample profile",
+      "sampleHint": "Discover Postulo with \"Camille Exemple\", a fictional profile."
+    }
   }
 }

@@ -1,0 +1,19 @@
+Léa Fictive
+Étudiante en informatique, alternance en développement web
+lea.fictive@example.com · 06 11 22 33 44
+
+Expériences
+Développeuse web — Agence Exemple (2025-09 – 2026-08)
+- Développé 3 sites vitrines en React pour des clients locaux
+- Réduit le temps de chargement des pages de 40 %
+
+Projets
+Application de covoiturage étudiant (2025)
+- 200 utilisateurs sur le campus
+
+Compétences
+Langages : TypeScript, Python
+Outils : Git, Docker
+
+Langues
+Anglais : B2

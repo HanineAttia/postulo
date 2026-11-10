@@ -8,7 +8,7 @@ import { AppLayout } from "./layout/AppLayout";
 import { NAV_ITEMS, type NavItem } from "./navigation";
 
 /** Pages already delivered; the others show a placeholder until their phase. */
-const IMPLEMENTED = ["dashboard", "profile"] as const;
+const IMPLEMENTED = ["dashboard", "profile", "settings"] as const;
 type PlaceholderItem = NavItem & { key: Exclude<NavItem["key"], (typeof IMPLEMENTED)[number]> };
 
 function isPlaceholder(item: NavItem): item is PlaceholderItem {
@@ -16,6 +16,13 @@ function isPlaceholder(item: NavItem): item is PlaceholderItem {
 }
 
 export const routes: RouteObject[] = [
+  {
+    // First-launch wizard, full screen (no sidebar).
+    path: "/welcome",
+    lazy: async () => ({
+      Component: (await import("@/features/onboarding/OnboardingPage")).OnboardingPage,
+    }),
+  },
   {
     path: "/",
     element: <AppLayout />,
@@ -25,6 +32,10 @@ export const routes: RouteObject[] = [
         // Forms, zod and drag and drop are loaded only when the page is opened.
         path: "profile",
         lazy: async () => ({ Component: (await import("@/pages/ProfilePage")).ProfilePage }),
+      },
+      {
+        path: "settings",
+        lazy: async () => ({ Component: (await import("@/pages/SettingsPage")).SettingsPage }),
       },
       ...NAV_ITEMS.filter(isPlaceholder).map((item) => ({
         path: item.path.slice(1),

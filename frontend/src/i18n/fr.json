@@ -521,5 +521,93 @@
     "sampleConfirm": "Oui, remplacer mon parcours",
     "sampleWarning": "Ton parcours actuel sera remplacé.",
     "sampleLoaded": "Profil d'exemple chargé."
+  },
+  "settings": {
+    "title": "Réglages",
+    "subtitle": "Choisis ton fournisseur d'IA. Les autres réglages arrivent avec les prochaines phases.",
+    "ai": {
+      "title": "Intelligence artificielle",
+      "description": "Postulo utilise l'IA de ton choix pour structurer ton CV et préparer tes candidatures.",
+      "providerLabel": "Fournisseur",
+      "descriptions": {
+        "mock": "Réponses simulées, sans compte ni coût. Idéal pour découvrir l'application.",
+        "anthropic_api": "Ta propre clé API Anthropic. Facturation à l'usage sur ton compte.",
+        "claude_code_cli": "Claude Code installé et connecté sur cet ordinateur.",
+        "openai_compatible": "Point d'accès compatible OpenAI, par exemple un modèle local."
+      },
+      "personalUse": "Usage personnel",
+      "termsNote": "Option désactivée par défaut, réservée à un usage personnel. Les conditions d'Anthropic limitent l'utilisation d'un abonnement Claude dans des produits tiers : vérifie-les avant d'activer cette option.",
+      "model": "Modèle",
+      "modelDefault": "Laisse vide pour utiliser {{model}}.",
+      "modelCliHint": "Laisse vide pour le modèle par défaut de Claude Code (sonnet, opus...).",
+      "timeout": "Délai maximal (secondes)",
+      "timeoutHint": "Au-delà, l'appel est interrompu. 300 secondes par défaut.",
+      "apiKey": "Clé API Anthropic",
+      "apiKeyHint": "Stockée dans le gestionnaire d'identifiants de ton système, jamais dans un fichier ni affichée.",
+      "saveKey": "Enregistrer la clé",
+      "keySaved": "Clé enregistrée.",
+      "keyStored": "Une clé est enregistrée.",
+      "deleteKey": "Supprimer la clé",
+      "test": "Tester la connexion",
+      "testCost": "Le test envoie un message très court (un appel IA).",
+      "save": "Enregistrer",
+      "saved": "Réglages enregistrés.",
+      "duration": "({{seconds}} s)"
+    },
+    "more": {
+      "title": "Premiers pas",
+      "description": "Relance l'assistant de démarrage quand tu veux.",
+      "onboarding": "Ouvrir l'assistant"
+    }
+  },
+  "onboarding": {
+    "title": "Bienvenue dans Postulo",
+    "subtitle": "Cinq étapes rapides pour bien démarrer. Tu peux tout passer et y revenir plus tard.",
+    "skipAll": "Passer l'assistant",
+    "stepsLabel": "Étapes de l'assistant",
+    "navLabel": "Navigation de l'assistant",
+    "back": "Précédent",
+    "next": "Suivant",
+    "finish": "Terminer",
+    "saveAndContinue": "Enregistrer et continuer",
+    "steps": {
+      "ai": {
+        "short": "IA",
+        "title": "Choisis ton fournisseur d'IA",
+        "description": "Teste la connexion, ou reste en mode démo pour découvrir l'application sans compte."
+      },
+      "profile": {
+        "short": "Parcours",
+        "title": "Ton parcours",
+        "description": "Importe ton CV, remplis les formulaires, ou commence avec un profil d'exemple."
+      },
+      "objective": {
+        "short": "Objectif",
+        "title": "Ton objectif",
+        "description": "Contrat, niveau, métier, postes, disponibilité, zones : Postulo s'en sert pour trier les offres."
+      },
+      "sources": {
+        "short": "Sources",
+        "title": "Sources d'offres",
+        "description": "France Travail, pages carrières, alertes e-mail.",
+        "soonTitle": "Les sources arrivent bientôt",
+        "soonDescription": "La recherche d'offres sur des sources autorisées arrive dans la prochaine phase. Rien à faire pour l'instant."
+      },
+      "organizations": {
+        "short": "Organisations",
+        "title": "Organisations cibles",
+        "description": "Les entreprises et laboratoires que tu veux suivre.",
+        "soonTitle": "Les suggestions arrivent bientôt",
+        "soonDescription": "Postulo te proposera des organisations à suivre à partir de ton parcours. Rien à faire pour l'instant."
+      }
+    },
+    "profile": {
+      "import": "Importer mon CV",
+      "importHint": "PDF, DOCX ou TXT. Tu vérifies tout avant d'enregistrer.",
+      "forms": "Remplir plus tard",
+      "formsHint": "Tu compléteras ton parcours dans « Mon parcours ».",
+      "sample": "Profil d'exemple",
+      "sampleHint": "Découvre Postulo avec « Camille Exemple », un profil fictif."
+    }
   }
 }
