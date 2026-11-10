@@ -20,6 +20,7 @@ from typing import Any, Literal
 import pypdfium2 as pdfium
 import typst
 
+from postulo.errors import UserError
 from postulo.services.documents.model import CvDocument, EngineName, LetterDocument
 
 PACKAGE_DIR = Path(__file__).resolve().parents[2]
@@ -30,13 +31,8 @@ DocKind = Literal["cv", "letter"]
 Document = CvDocument | LetterDocument
 
 
-class RenderError(Exception):
-    """User-facing rendering error (French message), technical detail apart."""
-
-    def __init__(self, message: str, detail: str = "") -> None:
-        super().__init__(message)
-        self.message = message
-        self.detail = detail
+class RenderError(UserError):
+    """The PDF could not be produced (French message, technical detail apart)."""
 
 
 @dataclass(frozen=True)

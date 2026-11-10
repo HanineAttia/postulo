@@ -19,6 +19,7 @@ from sqlalchemy import Engine
 from sqlmodel import Session
 
 from postulo.db.models import Job, JobStatus, StepStatus, utcnow
+from postulo.errors import UserError
 from postulo.services.llm.base import LLMError
 
 logger = logging.getLogger(__name__)
@@ -138,7 +139,7 @@ class JobManager:
         except asyncio.CancelledError:
             self._update(job_id, status=JobStatus.INTERRUPTED, failed_running_step=True)
             raise
-        except LLMError as exc:
+        except (LLMError, UserError) as exc:
             self._update(
                 job_id, status=JobStatus.FAILED, error=exc.message, failed_running_step=True
             )

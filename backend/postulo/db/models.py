@@ -1,7 +1,8 @@
 """SQLModel tables.
 
-Phase 0 defines only the tables it needs (jobs, AI usage, profile). The other
-tables of docs/SPEC.md section 4 arrive with their phase, through new migrations.
+Phase 0 defines only the tables it needs (jobs, AI usage, profile); phase 2 adds
+`application`. The other tables of docs/SPEC.md section 4 arrive with their phase,
+through new migrations.
 """
 
 from __future__ import annotations
@@ -100,4 +101,47 @@ class Profile(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     data: dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON, nullable=False))
     version: int = 1
+    updated_at: datetime = Field(default_factory=utcnow, sa_column=_ts())
+
+
+class ApplicationStatus(StrEnum):
+    DRAFT = "draft"
+    SENT = "sent"
+    FOLLOWED_UP = "followed_up"
+    INTERVIEW = "interview"
+    REJECTED = "rejected"
+    OFFER_RECEIVED = "offer_received"
+    NO_ANSWER = "no_answer"
+    WITHDRAWN = "withdrawn"
+
+
+class Application(SQLModel, table=True):
+    """One prepared application. Documents, drafts and reports live in its folder.
+
+    `offer_id` and `organization_id` stay plain columns until the `offer` and
+    `organization` tables arrive (phase 3).
+    """
+
+    id: str = Field(default_factory=lambda: uuid.uuid4().hex, primary_key=True)
+    offer_id: str | None = Field(default=None, index=True)
+    organization_id: int | None = None
+    organization: str = ""
+    position: str = ""
+    type: str = "offer"  # offer, spontaneous, referral, talent_pool
+    channel: str = ""
+    status: ApplicationStatus = Field(default=ApplicationStatus.DRAFT, index=True)
+    lang: str = "fr"
+    template: str = "modern"
+    engine: str = "typst"
+    folder: str  # absolute path of the application folder
+    email_subject: str = ""
+    email_body: str = ""
+    ats_score: int | None = None
+    jury_score_before: int | None = None
+    jury_score_after: int | None = None
+    compaction_level: int | None = None
+    job_id: str | None = None
+    notes: str = ""
+    sent_at: datetime | None = Field(default=None, sa_column=_ts(nullable=True))
+    created_at: datetime = Field(default_factory=utcnow, sa_column=_ts(index=True))
     updated_at: datetime = Field(default_factory=utcnow, sa_column=_ts())

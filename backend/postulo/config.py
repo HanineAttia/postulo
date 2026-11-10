@@ -70,11 +70,23 @@ class UISettings(BaseModel):
     theme: Literal["system", "light", "dark"] = "system"
 
 
+class DocumentSettings(BaseModel):
+    """Workshop defaults (SPEC 12.3, Réglages > documents)."""
+
+    engine: Literal["typst", "html"] = "typst"
+    template: Literal["modern", "classic"] = "modern"
+    language: Literal["fr", "en"] = "fr"
+    jury: bool = True
+    revision: bool = True
+    threshold: int = Field(default=82, ge=0, le=100)
+
+
 class Settings(BaseModel):
     """Non-secret user settings persisted in settings.json. Secrets go to keyring."""
 
     ai: AISettings = Field(default_factory=AISettings)
     ui: UISettings = Field(default_factory=UISettings)
+    documents: DocumentSettings = Field(default_factory=DocumentSettings)
     onboarding_completed: bool = False
 
     @property

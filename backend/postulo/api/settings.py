@@ -5,7 +5,14 @@ from __future__ import annotations
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from postulo.config import AISettings, Settings, UISettings, load_settings, save_settings
+from postulo.config import (
+    AISettings,
+    DocumentSettings,
+    Settings,
+    UISettings,
+    load_settings,
+    save_settings,
+)
 
 router = APIRouter(prefix="/api/settings", tags=["settings"])
 
@@ -13,6 +20,7 @@ router = APIRouter(prefix="/api/settings", tags=["settings"])
 class SettingsRead(BaseModel):
     ai: AISettings
     ui: UISettings
+    documents: DocumentSettings
     onboarding_completed: bool
     demo_mode: bool
 
@@ -21,6 +29,7 @@ class SettingsRead(BaseModel):
         return cls(
             ai=settings.ai,
             ui=settings.ui,
+            documents=settings.documents,
             onboarding_completed=settings.onboarding_completed,
             demo_mode=settings.demo_mode,
         )
