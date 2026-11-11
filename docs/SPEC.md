@@ -648,3 +648,131 @@ Chaque phase tient dans une à deux sessions de travail. À la fin de chaque pha
 15. Les identifiants ATS proposés **n'avaient pas pu être vérifiés** : bouton de vérification et tests réseau obligatoires.
 
 Si la mainteneuse place le code de la v1 dans `reference/postulo-v1/`, tu peux t'en inspirer pour la logique éprouvée : prompts, filtres, sources, contrôle ATS, démo. **Ne reprends pas** son interface Streamlit.
+
+---
+
+## 16. Ajouts issus des tests réels et des retours de la mainteneuse (v1.1)
+
+> Les sections 16.1 à 16.3 sont à réaliser **maintenant** (correctif de la phase 2).
+> Les sections 16.4 à 16.9 complètent les phases indiquées entre crochets.
+
+### 16.1 Qualité visuelle du CV et de la lettre [maintenant]
+Constat sur un vrai CV : texte entassé, dates qui passent à la ligne à gauche, titre, organisation et lieu collés sur une ligne, pas d'air entre les éléments, résumé coupé par des retours à la ligne, page à moitié vide.
+
+Règles de mise en page (sources : guides de Harvard Career Services, voir 16.3) :
+- **En-tête** : nom (grand, gras), titre du poste sur la ligne suivante, coordonnées sur une ou deux lignes avec un séparateur espacé (« · » ou « | » entouré d'espaces). 8 pt d'espace avant le résumé.
+- **Chaque élément (expérience, formation, projet…) sur deux lignes, avec une grille à deux colonnes (`grid(columns: (1fr, auto))`)** :
+  - ligne 1 : **intitulé en gras** à gauche, dates à droite ;
+  - ligne 2 : *organisation en italique* à gauche, ville à droite ;
+  - c'est toujours le texte de gauche qui passe à la ligne, jamais la date.
+- Puces sous l'élément, retrait régulier, 1 à 2 lignes chacune, **jamais en gras**. Le gras est réservé aux intitulés et aux libellés de compétences.
+- **Espacements** : environ 5 pt entre deux éléments d'une section, 10 pt avant chaque titre de section, interligne de 1,15 à 1,25.
+- **Remplissage de la page** : un CV d'une page doit être rempli entre 85 et 100 %. En dessous de 85 %, l'application **ajoute du contenu pertinent** de la bibliothèque (projet, puce, compétence, certification) avant d'agrandir l'espacement. Au-dessus d'une page, elle applique le compactage existant.
+- **Textes libres normalisés** avant le rendu : résumé, contexte et puces sans retour à la ligne interne, espaces multiples réduits, villes avec majuscule initiale (« Cergy »), pas de « ~ » ni de « 500K » dans une phrase (« environ 95 % », « 500 000 »).
+- **Sections toujours présentes si le parcours en contient** : Compétences et Langues. Projets pour un étudiant ou un jeune diplômé, sauf s'il n'y en a aucun.
+- **Lettre** :
+  - bloc expéditeur en haut à gauche (nom en gras, coordonnées) ;
+  - bloc destinataire (organisation, service recrutement, ville) ;
+  - lieu et date sur une ligne alignée à droite ;
+  - « Objet : Candidature – <intitulé exact du poste> » en gras ;
+  - formule d'appel, puis 3 ou 4 paragraphes séparés par 10 pt, interligne de 1,3 ;
+  - formule de politesse, puis nom ;
+  - marges de 22 à 25 mm, page équilibrée verticalement.
+- **Contrôle automatique de mise en page** (nouveau, dans le rapport qualité) :
+  - taux de remplissage de la page (position verticale du dernier texte, mesurée avec pypdfium2) ;
+  - dates sur la même ligne que leur intitulé ;
+  - aucun élément sans organisation ni date ;
+  - aucune ligne entièrement en majuscules dans le corps ;
+  - aucune puce de plus de 2 lignes ;
+  - aucun fragment de phrase (puce qui se termine par « de », « et », « à »…).
+- **Revue visuelle** : chaque PDF est aussi rendu en image (PNG) et affiché dans l'Atelier, pour vérification avant envoi.
+
+### 16.2 Métadonnées de l'offre et qualité de l'import [maintenant]
+- **Intitulé et organisation de l'offre** extraits par l'IA, puis affichés pré-remplis et **modifiables** dans l'Atelier avant la génération. Ne jamais utiliser un slogan ou la première ligne de l'offre comme intitulé.
+- **Lettre** :
+  - elle nomme l'organisation et l'intitulé exact du poste ;
+  - elle cite au moins deux éléments concrets de l'offre (missions, équipe, produit) ;
+  - elle ne cite jamais le slogan entre guillemets ;
+  - elle n'assemble jamais des morceaux de puces : chaque phrase est complète et relue.
+- **Import de CV en deux colonnes** : beaucoup de CV étudiants ont une colonne latérale, que l'extraction de texte mélange avec la colonne principale.
+  - Extraire le texte avec les positions des mots (pypdfium2) et détecter les colonnes avant d'envoyer le texte à l'IA.
+  - Fusionner les lignes coupées (une ligne qui commence par une minuscule prolonge la précédente).
+- **Validation après import**, avec des signalements dans l'aperçu :
+  - un élément de formation dont l'intitulé est en majuscules (« CERTIFICATIONS ») ;
+  - une expérience sans organisation ni dates ;
+  - une réalisation qui se termine au milieu d'une phrase ;
+  - un projet ou une certification rangé dans une mauvaise section.
+
+  L'utilisatrice corrige en un clic : déplacer vers une autre section, fusionner avec l'élément précédent, supprimer.
+
+### 16.3 Règles reconnues pour le CV [maintenant]
+Il n'existe pas de norme internationale unique : les conventions varient selon les pays (la photo et l'âge en France, l'absence de photo aux États-Unis…). Postulo applique un **socle commun** reconnu, puis une **variante** selon la langue et le pays visé :
+- **Socle** (guides de Harvard Career Services) :
+  - verbes d'action, résultats chiffrés, réalisations plutôt que tâches ;
+  - pas de pronoms personnels, pas de « responsable de » ;
+  - ordre antéchronologique ;
+  - cohérence absolue du gras, de l'italique, des majuscules et de la ponctuation des puces (un point final partout ou nulle part) ;
+  - équilibre entre texte et espaces blancs ;
+  - même police pour le CV et la lettre ;
+  - 1 page pour un étudiant ;
+  - pas de photo, d'âge ni de situation familiale ;
+  - envoi en PDF ;
+  - lettre d'une page qui ne répète pas le CV.
+- **Formule XYZ** (Laszlo Bock, ancien DRH de Google) pour les puces : « J'ai accompli X, mesuré par Y, en faisant Z ».
+- **Variante France** : titre explicite, formation d'abord pour un étudiant, lettre « vous / moi / nous ».
+- **Variante internationale (anglais)** : « Summary », mois abrégés en anglais, format A4 ou Letter au choix.
+- Chaque règle a un identifiant (`R-xx`) et une source dans `docs/research.md`. Le jury simulé note la candidature **règle par règle** et cite l'identifiant dans ses corrections.
+
+### 16.4 Calendrier et cycle de vie des candidatures [phase 5]
+- **Vue Calendrier** dans Suivi (mois, semaine), avec une couleur par état. La couleur s'accompagne toujours d'un libellé et d'une icône, pour l'accessibilité.
+
+  | État | Couleur |
+  |---|---|
+  | Envoyée, en attente | orange |
+  | Entretien en cours | jaune |
+  | Acceptée | vert |
+  | Refusée | rouge |
+  | Sans réponse | gris |
+- **Changement d'état possible à tout moment** : refus reçu plus tard, convocation, offre. Chaque changement est historisé (date et note).
+- **Événements** :
+  - entretien (RH, technique, manager, autre), avec date, heure, lieu ou lien de visio, interlocuteur ;
+  - date limite de candidature ;
+  - relances.
+- **Délai de réponse annoncé** : après « J'ai envoyé », l'application demande si l'accusé de réception indique un délai (« sans réponse sous 3 semaines, candidature non retenue »). Sinon, elle applique le délai par défaut des réglages. À l'échéance, l'état passe à **« Sans réponse (délai écoulé) »** avec une notification. La candidature reste modifiable.
+- **Détection dans la boîte mail** (si les alertes e-mail sont configurées) : l'IA classe les réponses des recruteurs (accusé de réception avec délai, convocation, refus) et **propose** la mise à jour de l'état et du calendrier. Rien ne change sans validation.
+
+### 16.5 Archive complète de chaque candidature [phases 3 et 5]
+- À la découverte ou à la génération, l'offre est **archivée localement** : texte intégral, URL, organisation, intitulé, date de publication et date d'archivage. Si possible, la page est aussi enregistrée en PDF.
+- Une **fiche candidature** regroupe : offre archivée, CV et lettre envoyés (toutes les versions), e-mail, historique des états, notes d'entretien, préparation. Elle reste consultable même si l'offre disparaît du site.
+
+### 16.6 Notifications [phases 3 et 5]
+- **Dans l'application** : centre de notifications (nouvelles offres pertinentes, relances, entretiens à venir, délais écoulés).
+- **Notifications Windows** (toast) quand l'application tourne.
+- **Veille en arrière-plan, même application fermée** :
+  - commande `postulo watch`, planifiée par le **Planificateur de tâches Windows** (installée depuis Réglages), qui interroge les sources toutes les 1 à 3 heures, au choix ;
+  - **e-mail récapitulatif** envoyé à l'utilisatrice elle-même par SMTP, avec le même mot de passe d'application Gmail que pour les alertes, uniquement pour les offres au-dessus du seuil de pertinence.
+
+  « Dès qu'une offre est en ligne » signifie dès qu'elle apparaît dans une source suivie : il n'y a pas de temps réel absolu. Pour LinkedIn et Indeed, les alertes de ces sites restent la source la plus rapide.
+- **Agenda** : bouton « Ajouter à Google Agenda » sur chaque événement. Le lien `https://calendar.google.com/calendar/render?action=TEMPLATE&text=…&dates=AAAAMMJJTHHMMSS/AAAAMMJJTHHMMSS&details=…&location=…&ctz=Europe/Paris` est gratuit et ne demande aucune connexion. Plus un export `.ics` (Outlook, Apple). Google Agenda envoie ensuite ses propres rappels sur le téléphone. La synchronisation automatique par l'API Google Calendar est **hors périmètre v1** : il faudrait un projet Google Cloud et une connexion OAuth par utilisateur.
+
+### 16.7 Offres : lien ou texte, et tri [phase 3]
+- Partout où l'on donne une offre (Offres, Atelier) : **coller le texte ou donner le lien**. Le lien est lu automatiquement si le site le permet (JSON-LD). Sinon, l'application demande le texte, notamment pour LinkedIn et Indeed.
+- **Tri des offres** : par date, par pertinence, ou **les deux**. Le score combiné vaut pertinence × fraîcheur, avec une fraîcheur qui décroît sur 14 jours. Le tri choisi est mémorisé.
+- Indicateur « publiée il y a X jours ». Les offres de moins de 48 heures sont mises en avant.
+
+### 16.8 Contacts pour candidatures spontanées et marché caché [phase 4]
+- **Organisations** : suggestions par recherche web, déjà prévues.
+- **Contacts publics de recrutement** : adresse générique publiée par l'organisation (recrutement@, page « Nous rejoindre »), formulaire de candidature spontanée, page d'équipe d'un laboratoire. Le **lien de la source** est toujours affiché.
+- **Personnes** (recruteur, manager, chercheur) :
+  - pas de recherche automatique d'e-mails personnels ni de collecte de profils LinkedIn : conditions d'utilisation de LinkedIn, données personnelles (RGPD) et risque de rebond ou de signalement comme spam ;
+  - à la place :
+    - un **lien de recherche LinkedIn préparé** (par exemple « Talent Acquisition » + organisation) que l'utilisatrice ouvre elle-même ;
+    - l'import de **ses propres relations** LinkedIn (déjà prévu) ;
+    - pour un laboratoire, le lien vers la page de l'équipe et les publications (HAL), où les adresses professionnelles des chercheurs sont publiques.
+  - L'utilisatrice enregistre elle-même le contact trouvé (nom, lien LinkedIn, e-mail) dans son carnet local.
+
+### 16.9 Idées complémentaires retenues
+- **Extension de navigateur « Envoyer à Postulo »** [phase 6] : sur n'importe quelle page d'offre ouverte par l'utilisatrice (y compris LinkedIn), un clic envoie le texte visible et l'URL à l'application locale. Cela règle le problème des liens illisibles et de l'archivage.
+- **Rappel J-1 avant un entretien** [phase 5] : fiche de préparation générée à l'avance et proposition de simulation.
+- **Objectif hebdomadaire** [phase 5] : nombre de candidatures par semaine, avec une barre de progression et un bilan du dimanche.
+- **Date limite de candidature** [phase 3] : extraite de l'offre quand elle y figure, ajoutée au calendrier, avec un rappel 3 jours avant.

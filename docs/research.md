@@ -25,3 +25,29 @@
 ## 4. Choix techniques
 - **Claude Agent SDK** : « Unless previously approved, Anthropic does not allow third party developers to offer claude.ai login or rate limits for their products, including agents built on the Claude Agent SDK. » Le CLI peut être piloté en sous-processus avec `-p`. Source : [Agent SDK overview](https://code.claude.com/docs/en/agent-sdk/overview).
 - **Commande Claude Code utilisée par la v1**, testée et fonctionnelle : `claude -p "<consigne>" --output-format text --no-session-persistence --disallowedTools "mcp__*" --tools ""`, avec le prompt sur stdin. Recherche web : `--tools "WebSearch,WebFetch" --allowedTools "WebSearch,WebFetch"`.
+
+## 5. Règles reconnues pour le CV (SPEC 16.3)
+
+Il n'existe pas de norme internationale unique. Postulo applique un socle commun tiré des guides de Harvard Career Services, la formule XYZ pour les puces, puis une variante selon la langue. Sources :
+- [Harvard Extension School, Create impactful resumes and cover letters](https://careerservices.fas.harvard.edu/resources/hes-create-impactful-resumes-and-cover-letters/) (`harvard-hes`).
+- [Harvard T.H. Chan School of Public Health, Resume Guide (PDF, 2016)](https://content.sph.harvard.edu/wwwhsph/sites/36/2016/06/Resume-Guide-June-2016.pdf) (`harvard-chan`).
+- [Formule XYZ de Laszlo Bock, ancien DRH de Google (Quartz)](https://qz.com/201088/google-just-revealed-the-incredibly-simple-formula-for-killer-resumes) (`bock-xyz`) : « Accomplished [X] as measured by [Y], by doing [Z] ».
+
+Chaque règle a un identifiant stable, repris par le code (`services/documents/rules.py`), les prompts et le jury simulé, qui cite l'identifiant dans ses corrections.
+
+| Id | Règle | Source |
+|---|---|---|
+| R-01 | Verbes d'action, réalisations plutôt que tâches | harvard-hes, harvard-chan |
+| R-02 | Résultats chiffrés quand le parcours les contient ; puces au format XYZ (X accompli, mesuré par Y, en faisant Z) | bock-xyz, harvard-hes |
+| R-03 | Pas de pronoms personnels, pas de « responsable de » | harvard-hes, harvard-chan |
+| R-04 | Ordre antéchronologique | harvard-hes, harvard-chan |
+| R-05 | Cohérence du gras, de l'italique, des majuscules et de la ponctuation des puces (Postulo : aucun point final) | harvard-chan |
+| R-06 | Équilibre entre texte et espaces blancs ; page d'un CV remplie entre 85 et 100 % | harvard-chan, SPEC 16.1 |
+| R-07 | Même police pour le CV et la lettre | harvard-hes |
+| R-08 | Une page pour un étudiant ou un jeune diplômé | harvard-hes, harvard-chan |
+| R-09 | Pas de photo, d'âge ni de situation familiale | harvard-hes |
+| R-10 | Envoi en PDF | harvard-hes |
+| R-11 | Lettre d'une page, adaptée à l'organisation et au poste, qui ne répète pas le CV | harvard-hes |
+| R-12 | Variante France : titre explicite, formation d'abord pour un étudiant, lettre « vous / moi / nous » | section 1 ci-dessus, SPEC 7.1 et 7.3 |
+| R-13 | Variante internationale (anglais) : section « Summary », mois abrégés en anglais, format A4 ou Letter | harvard-hes |
+| R-14 | Mots-clés de l'offre repris avec leur orthographe exacte quand ils décrivent fidèlement le parcours | section 2 ci-dessus |

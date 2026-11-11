@@ -12,7 +12,26 @@ up to date (commands, architecture, conventions, decisions).
 - **Phase 2 (application workshop): done** in demo mode (CV on one page, clickable links, no
   ligature, ATS 93, jury 74 then 84). Still to validate by the maintainer with her quota: a real
   offer pasted in the workshop with a real provider (ATS >= 85 expected; SPEC 7.7 references).
+- **Phase 2 fix (SPEC 16.1 to 16.3)**: in progress (layout quality, offer metadata, import of
+  two-column CVs, CV rules R-xx). See the plan in the commit history.
 - Next: phase 3 (published offers: sources, pre-sorting, AI analysis, Offers and Organizations).
+
+### SPEC 16 sections planned for later phases
+Do them with their phase, not before (SPEC 16.4 to 16.9):
+- **Phase 3**: 16.5 offer archive at discovery (full text, URL, dates, page saved as PDF if possible);
+  16.6 in-app notifications for new relevant offers and background watch (`postulo watch` scheduled
+  by the Windows Task Scheduler, SMTP digest sent to the user's own address); 16.7 offer given by link or text
+  (JSON-LD), sort by date, relevance or both (relevance x freshness over 14 days), "published X
+  days ago"; 16.9 application deadline extracted from the offer, calendar and reminder 3 days before.
+- **Phase 4**: 16.8 public recruiting contacts with their source link, prepared LinkedIn search
+  links, own LinkedIn connections import, lab team pages and HAL; never collect personal e-mails
+  or LinkedIn profiles.
+- **Phase 5**: 16.4 calendar view in Tracking (colour + label + icon per state), state changes at
+  any time with history, interview events, announced response delay then "no answer (delay over)",
+  mailbox classification that only proposes updates; 16.5 application record (all versions,
+  e-mail, history, interview notes); 16.6 Windows toasts, Google Calendar template link and `.ics`
+  export (no Google API); 16.9 reminder the day before an interview, weekly goal.
+- **Phase 6**: 16.9 browser extension "Send to Postulo".
 
 ## Working rules (SPEC section 0, summarized)
 
