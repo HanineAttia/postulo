@@ -49,6 +49,39 @@ def document_data(doc: Document) -> dict[str, Any]:
     return data
 
 
+PT_PER_MM = 72 / 25.4
+
+
+def lowest_text_bottom(pdf: bytes) -> tuple[float, float]:
+    """(bottom of the lowest printed character, page height) on the last page, in points."""
+    document = pdfium.PdfDocument(pdf)
+    try:
+        page = document[len(document) - 1]
+        height = page.get_height()
+        textpage = page.get_textpage()
+        text = textpage.get_text_range()
+        lowest = height
+        for index in range(textpage.count_chars()):
+            if index < len(text) and text[index].isspace():
+                continue
+            left, bottom, right, top = textpage.get_charbox(index)
+            if right > left and top > bottom:
+                lowest = min(lowest, bottom)
+        textpage.close()
+        page.close()
+        return lowest, height
+    finally:
+        document.close()
+
+
+def fill_ratio(pdf: bytes, doc: Document) -> float:
+    """Share of the usable page height used by the text (last page), SPEC 16.1."""
+    lowest, height = lowest_text_bottom(pdf)
+    margin = doc.layout.margin_y * PT_PER_MM
+    usable = height - 2 * margin
+    return max(0.0, (height - margin - lowest) / usable) if usable > 0 else 0.0
+
+
 def page_count(pdf: bytes) -> int:
     document = pdfium.PdfDocument(pdf)
     try:

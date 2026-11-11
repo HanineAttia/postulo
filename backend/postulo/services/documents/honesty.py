@@ -72,8 +72,13 @@ def numbers_in(text: str) -> set[str]:
     return {n.replace(",", ".") for n in _NUMBER_RE.findall(joined)}
 
 
-def _tokens(text: str) -> set[str]:
+def tokens(text: str) -> set[str]:
     return {t for t in _WORD_RE.findall(normalize_term(text)) if len(t) > 2} - _STOPWORDS
+
+
+def offer_tokens(offer_text: str) -> set[str]:
+    """Meaningful words of an offer, to measure the relevance of a library element."""
+    return tokens(offer_text)
 
 
 @dataclass
@@ -185,8 +190,8 @@ class _Guard:
     def _closest(bullet: str, candidates: list[str]) -> str | None:
         if not candidates:
             return None
-        words = _tokens(bullet)
-        best = max(candidates, key=lambda c: len(words & _tokens(c)))
+        words = tokens(bullet)
+        best = max(candidates, key=lambda c: len(words & tokens(c)))
         candidates.remove(best)
         return best
 
@@ -264,9 +269,9 @@ class _Guard:
     def fallback(
         self, items: list[Experience] | list[Project], prefix: str, limit: int, per_item: int
     ) -> list[SelectedItem]:
-        offer = _tokens(self.offer_text)
+        offer = tokens(self.offer_text)
         scored = sorted(
-            range(len(items)), key=lambda i: (-len(offer & _tokens(_item_text(items[i]))), i)
+            range(len(items)), key=lambda i: (-len(offer & tokens(_item_text(items[i]))), i)
         )
         return [
             SelectedItem(ref=f"{prefix}{i}", bullets=items[i].achievements[:per_item])

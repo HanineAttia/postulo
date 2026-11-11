@@ -23,6 +23,7 @@ from sqlmodel import Session
 
 from postulo.db.models import Application, utcnow
 from postulo.db.session import get_engine
+from postulo.services.documents import normalize
 from postulo.services.documents.assemble import (
     build_cv,
     build_letter,
@@ -38,23 +39,27 @@ from postulo.services.documents.draft import (
     merge_revision,
     sanitize_offer,
 )
+from postulo.services.documents.fill import fill_selection
 from postulo.services.documents.honesty import GuardResult, apply_guard, letter_warnings
 from postulo.services.documents.model import (
     CvDocument,
     DocLang,
     EngineName,
     LetterDocument,
+    Paper,
     TemplateName,
     layout_for,
 )
+from postulo.services.documents.preview_png import pdf_to_png_pages
 from postulo.services.documents.render import RenderedPdf, document_data, render_pdf
-from postulo.services.documents.selection import limits_for
+from postulo.services.documents.selection import Selection, limits_for
 from postulo.services.jobs import JobContext, JobFunc
 from postulo.services.llm.base import LLMProvider
 from postulo.services.llm.json_utils import complete_json
 from postulo.services.profile.schema import CareerProfile
 from postulo.services.quality.ats_check import AtsReport, check_cv_pdf, extract_text
 from postulo.services.quality.jury import JuryReport, run_jury
+from postulo.services.quality.layout_check import LayoutReport, check_layout
 from postulo.services.workshop.storage import (
     ApplicationReport,
     EditableDocuments,
@@ -77,6 +82,8 @@ class WorkshopOptions:
     threshold: int = 82
     organization: str = ""
     position: str = ""
+    offer_city: str = ""
+    paper: Paper = "a4"
 
 
 @dataclass
@@ -86,6 +93,7 @@ class Rendered:
     letter: LetterDocument
     letter_pdf: RenderedPdf
     ats: AtsReport
+    layout: LayoutReport
 
 
 @dataclass
@@ -118,7 +126,10 @@ def render_documents(
         target_pages=target,
         headings=[s.title for s in cv.sections],
     )
-    return Rendered(cv=cv, cv_pdf=cv_pdf, letter=letter, letter_pdf=letter_pdf, ats=ats)
+    layout = check_layout(cv_pdf.data, cv, target_pages=target)
+    return Rendered(
+        cv=cv, cv_pdf=cv_pdf, letter=letter, letter_pdf=letter_pdf, ats=ats, layout=layout
+    )
 
 
 def produce(
@@ -127,27 +138,49 @@ def produce(
     guard = apply_guard(draft, profile, offer_text)
     organization = options.organization.strip() or draft.offer.organization.strip()
     position = options.position.strip() or draft.offer.title.strip() or guard.selection.title
-    cv = build_cv(profile, guard.selection, lang=options.lang, template=options.template)
-    subject = draft.letter.subject.strip() or (
-        f"Candidature : {position}" if options.lang == "fr" else f"Application: {position}"
-    )
+
+    def build(selection: Selection) -> CvDocument:
+        return build_cv(
+            profile, selection, lang=options.lang, template=options.template, paper=options.paper
+        )
+
+    target = limits_for(profile).pages
+    selection = guard.selection
+    if target == 1:
+        # SPEC 16.1: a short page gets relevant library content before more spacing.
+        selection = fill_selection(
+            selection,
+            profile,
+            offer_text,
+            build=build,
+            render=lambda doc: render_pdf(doc, "cv", options.engine),
+        ).selection
+    cv = build(selection)
     letter = build_letter(
         profile,
         [fill_placeholders(p, profile, organization=organization, role=position)
          for p in draft.letter.paragraphs],
         organization=organization,
-        subject=subject,
+        position=position,
+        offer_city=options.offer_city,
         lang=options.lang,
         template=options.template,
+        paper=options.paper,
     )  # fmt: skip
     warnings = [*guard.warnings, *letter_warnings(letter.paragraphs, profile, offer_text)]
     if not letter.paragraphs:
         warnings.append("L'IA n'a pas rédigé de lettre : complète-la avec « Éditer ».")
-    email_subject = fill_placeholders(
-        draft.email.subject or subject, profile, organization=organization, role=position
+    # Built here from the validated position, never from the AI (no slogan, no "Objet :").
+    email_subject = (
+        normalize.one_line(
+            ("Candidature – " if options.lang == "fr" else "Application – ") + position
+        )
+        if position
+        else normalize.one_line(draft.email.subject)
     )
-    email_body = fill_placeholders(
-        draft.email.body, profile, organization=organization, role=position
+    email_body = normalize.email_body(
+        fill_placeholders(draft.email.body, profile, organization=organization, role=position),
+        options.lang,
     )
     if options.lang == "fr":
         email_subject, email_body = french_typography(email_subject), french_typography(email_body)
@@ -185,8 +218,14 @@ def save_rendered(
     for old in folder.glob("*.pdf"):
         if old.name not in (cv_file, letter_file):
             old.unlink()
+    for old_png in folder.glob("*.png"):
+        old_png.unlink()
     (folder / cv_file).write_bytes(rendered.cv_pdf.data)
     (folder / letter_file).write_bytes(rendered.letter_pdf.data)
+    # SPEC 16.1: an image of every page, for the visual review before sending.
+    for kind, pdf in (("cv", rendered.cv_pdf.data), ("letter", rendered.letter_pdf.data)):
+        for number, png in enumerate(pdf_to_png_pages(pdf), start=1):
+            (folder / f"{kind}-{number}.png").write_bytes(png)
     write_json(folder, "data.json", document_data(rendered.cv))
     return cv_file, letter_file
 
@@ -276,6 +315,7 @@ def make_application_job(
             pages=final.rendered.ats.pages,
             target_pages=limits_for(profile).pages,
             letter_pages=final.rendered.letter_pdf.pages,
+            layout=final.rendered.layout,
             engine=options.engine,
             cv_file=cv_file,
             letter_file=letter_file,
@@ -339,9 +379,10 @@ def regenerate(
     The template of the CV applies to both documents; compaction starts again from level 0.
     """
     template = documents.cv.layout.template
+    paper = documents.cv.layout.paper
     documents = EditableDocuments(
-        cv=documents.cv.model_copy(update={"layout": layout_for(template)}),
-        letter=documents.letter.model_copy(update={"layout": layout_for(template)}),
+        cv=documents.cv.model_copy(update={"layout": layout_for(template, paper)}),
+        letter=documents.letter.model_copy(update={"layout": layout_for(template, paper)}),
     )
     folder = Path(application.folder)
     report = read_report(folder)
@@ -355,6 +396,7 @@ def regenerate(
     report.compaction_level = rendered.cv.layout.level
     report.pages = rendered.ats.pages
     report.letter_pages = rendered.letter_pdf.pages
+    report.layout = rendered.layout
     report.cv_file, report.letter_file = cv_file, letter_file
     report.edited = True
     write_json(folder, "report.json", report)

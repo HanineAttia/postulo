@@ -13,7 +13,9 @@ import pytest
 
 from postulo.app import create_app
 from postulo.services.documents.assemble import build_cv
-from postulo.services.documents.render import render_pdf
+from postulo.services.documents.compact import compact_cv
+from postulo.services.documents.model import CvDocument
+from postulo.services.documents.render import RenderedPdf, render_pdf
 from postulo.services.documents.selection import default_selection
 from postulo.services.llm.usage import calls_today
 from postulo.services.profile.sample import sample_profile
@@ -31,8 +33,12 @@ def profile() -> CareerProfile:
 
 
 def _cv_pdf(profile: CareerProfile) -> tuple[bytes, list[str]]:
-    cv = build_cv(profile, default_selection(profile))
-    return render_pdf(cv, "cv").data, [s.title for s in cv.sections]
+    cv, rendered = compact_cv(build_cv(profile, default_selection(profile)), 1, _render)
+    return rendered.data, [s.title for s in cv.sections]
+
+
+def _render(doc: CvDocument) -> RenderedPdf:
+    return render_pdf(doc, "cv")
 
 
 # --- ATS check --------------------------------------------------------------------------------

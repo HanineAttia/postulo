@@ -10,48 +10,28 @@
 @font-face { font-family: "{{ family }}"; src: url("{{ url }}") format("truetype"); font-weight: {{ weight }}; font-style: {{ style }}; }
 {% endfor %}
 {% endfor %}
-@page { size: A4; margin: {{ L.margin_y }}mm {{ L.margin_x }}mm; }
+{% block page %}@page { size: {{ "A4" if L.paper == "a4" else "letter" }}; margin: {{ L.margin_y }}mm {{ L.margin_x }}mm; }{% endblock %}
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
   font-family: "{{ L.font }}", sans-serif;
   font-size: {{ L.size }}pt;
   color: {{ L.ink }};
-  line-height: {{ 1 + L.leading }};
+  line-height: {{ 0.73 + L.leading }};
   text-align: left;
   /* ATS rules (SPEC 7.2): no ligatures, no hyphenation. */
   font-variant-ligatures: none;
   font-feature-settings: "liga" 0, "clig" 0, "dlig" 0, "hlig" 0;
   hyphens: none;
 }
+p { margin: 0; }
 a { color: {{ L.accent }}; text-decoration: {{ "underline" if L.template == "classic" else "none" }}; }
-.name { font-size: 2em; font-weight: 700; color: {{ L.accent }}; line-height: 1.15; margin: 0; }
-.subtitle { font-size: 1.15em; font-weight: 600; margin: 0; }
-.contact { font-size: 0.95em; margin: 0; }
-.contact span, .dates, .nobreak { white-space: nowrap; }
-.summary { margin: 0.6em 0 0; }
-h2 { font-size: 1.12em; font-weight: 700; color: {{ L.accent }}; margin: {{ L.gap }}mm 0 0.45em;
-     padding-bottom: 0.18em; border-bottom: 0.6pt solid {{ L.accent }}; }
-.entry { margin-top: {{ L.item_gap }}mm; break-inside: avoid; }
-.head { display: flex; gap: 1em; }
-.head .main { flex: 1; }
-.title { font-weight: 700; }
-.dates { font-size: 0.95em; }
-.details { font-size: 0.95em; margin: 0; }
-ul { margin: 0.2em 0 0; padding-left: 1.1em; }
-li { margin: 0; }
-.line { margin-top: {{ L.item_gap * 0.8 }}mm; }
-.label { font-weight: 600; }
-.letter p { margin: 0 0 1em; }
+.contact span, .nobreak { white-space: nowrap; }
+.sep { margin: 0 0.45em; }
+{% block style %}{% endblock %}
 </style>
 </head>
 <body>
-<p class="name">{{ d.name }}</p>
-{% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% endif %}
-<p class="contact">
-{%- if d.contact.city %}{{ d.contact.city }}{% endif -%}
-{%- for l in d.contact.links %}{% if not loop.first or d.contact.city %} | {% endif %}<span><a href="{{ l.url }}">{{ l.label }}</a></span>{% endfor -%}
-</p>
 {% block content %}{% endblock %}
 </body>
 </html>

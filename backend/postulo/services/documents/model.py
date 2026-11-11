@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 DocLang = Literal["fr", "en"]
 TemplateName = Literal["modern", "classic"]
 EngineName = Literal["typst", "html"]
+Paper = Literal["a4", "us-letter"]
 
 SECTION_KEYS = (
     "education",
@@ -66,19 +67,22 @@ class Section(BaseModel):
 
 
 class Layout(BaseModel):
-    """Visual parameters. Compaction (compact.py) only changes these and the content."""
+    """Visual parameters (SPEC 16.1). Compaction and filling only change these and the content."""
 
     template: TemplateName = "modern"
     font: str = "Inter"
     accent: str = "#1D4E89"
     ink: str = "#14213D"
+    paper: Paper = "a4"
     size: float = 10.0  # pt
-    margin_x: float = 14.0  # mm
-    margin_y: float = 12.0  # mm
-    leading: float = 0.55  # em, space between lines of a paragraph
-    gap: float = 3.2  # mm, space before a section title
-    item_gap: float = 1.6  # mm, space between entries
+    margin_x: float = 16.0  # mm
+    margin_y: float = 14.0  # mm
+    leading: float = 0.5  # em between lines of a paragraph (line height about 1.2)
+    section_gap: float = 10.0  # pt before a section title
+    entry_gap: float = 5.0  # pt between two entries of a section
+    bullet_gap: float = 2.0  # pt between two bullets
     level: int = 0  # compaction level reached (0 to 4)
+    airy: int = 0  # extra spacing step used to fill a short page (0 to 2)
 
 
 class CvDocument(BaseModel):
@@ -119,5 +123,5 @@ TEMPLATE_STYLES: dict[TemplateName, dict[str, str]] = {
 }
 
 
-def layout_for(template: TemplateName) -> Layout:
-    return Layout(template=template, **TEMPLATE_STYLES[template])
+def layout_for(template: TemplateName, paper: Paper = "a4") -> Layout:
+    return Layout(template=template, paper=paper, **TEMPLATE_STYLES[template])

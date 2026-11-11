@@ -12,7 +12,7 @@ from collections.abc import Callable
 from datetime import date
 from urllib.parse import urlparse
 
-from postulo.services.documents import labels
+from postulo.services.documents import labels, normalize
 from postulo.services.documents.model import (
     Contact,
     ContactLink,
@@ -21,6 +21,7 @@ from postulo.services.documents.model import (
     Entry,
     LetterDocument,
     Line,
+    Paper,
     Section,
     TemplateName,
     layout_for,
@@ -126,9 +127,9 @@ def _education_entry(ref: str, item: Education, lang: DocLang) -> Entry:
         ref=ref,
         title=title,
         subtitle=item.school if title != item.school else "",
-        location=item.city,
+        location=normalize.city(item.city),
         dates=labels.format_range(item.start, item.end, lang, ongoing=True),
-        details=". ".join(details),
+        details=normalize.free_text(". ".join(details), lang),
     )
 
 
@@ -136,10 +137,10 @@ def _experience_entry(ref: str, item: Experience, chosen: SelectedItem, lang: Do
     return Entry(
         ref=ref,
         title=item.title,
-        subtitle=item.organization,
-        location=item.city,
+        subtitle=normalize.one_line(item.organization),
+        location=normalize.city(item.city),
         dates=labels.format_range(item.start, item.end, lang, ongoing=True),
-        bullets=list(chosen.bullets),
+        bullets=_bullets(chosen.bullets, lang),
     )
 
 
@@ -149,11 +150,21 @@ def _project_entry(ref: str, item: Project, chosen: SelectedItem, lang: DocLang)
         title=item.name,
         dates=labels.format_range(item.start, item.end, lang, ongoing=False),
         url=item.url,
-        bullets=list(chosen.bullets),
+        bullets=_bullets(chosen.bullets, lang),
     )
 
 
+def _bullets(bullets: list[str], lang: DocLang) -> list[str]:
+    return [text for b in bullets if (text := normalize.bullet(b, lang))]
+
+
 def _simple_entry(ref: str, item: object, lang: DocLang) -> Entry:
+    entry = _raw_simple_entry(ref, item, lang)
+    entry.details = normalize.free_text(entry.details, lang)
+    return entry
+
+
+def _raw_simple_entry(ref: str, item: object, lang: DocLang) -> Entry:
     if isinstance(item, Certification):
         return Entry(
             ref=ref,
@@ -212,6 +223,7 @@ def build_cv(
     *,
     lang: DocLang = "fr",
     template: TemplateName = "modern",
+    paper: Paper = "a4",
 ) -> CvDocument:
     table: dict[str, object] = dict(assign_references(profile))
     titles = labels.SECTION_TITLES[lang]
@@ -290,11 +302,11 @@ def build_cv(
     return CvDocument(
         lang=lang,
         name=full_name(profile),
-        title=clean_title(selection.title, profile),
-        summary=selection.summary.strip(),
+        title=normalize.one_line(clean_title(selection.title, profile)),
+        summary=normalize.free_text(selection.summary, lang),
         contact=build_contact(profile),
         sections=ordered,
-        layout=layout_for(template),
+        layout=layout_for(template, paper),
     )
 
 
@@ -307,45 +319,62 @@ _CLOSING: dict[DocLang, str] = {
 }
 
 
+_RECRUITMENT: dict[DocLang, str] = {"fr": "Service recrutement", "en": "Recruitment team"}
+_SUBJECT: dict[DocLang, str] = {"fr": "Objet : Candidature – ", "en": "Subject: Application – "}
+
+
+def letter_subject(position: str, lang: DocLang) -> str:
+    """'Objet : Candidature – <exact position>' (SPEC 16.1), built here, never by the AI."""
+    return _SUBJECT[lang] + normalize.one_line(position) if position.strip() else ""
+
+
 def build_letter(
     profile: CareerProfile,
     paragraphs: list[str],
     *,
     organization: str = "",
-    subject: str = "",
+    position: str = "",
+    offer_city: str = "",
     lang: DocLang = "fr",
     template: TemplateName = "modern",
+    paper: Paper = "a4",
     today: date | None = None,
 ) -> LetterDocument:
     day = today or date.today()
     long_date = labels.long_date(day.year, day.month, day.day, lang)
-    city = profile.identity.city
+    city = normalize.city(profile.identity.city)
     if lang == "fr":
         place_date = f"{city}, le {long_date}" if city else f"Le {long_date}"
     else:
         place_date = f"{city}, {long_date}" if city else long_date
-    texts = [p.strip() for p in paragraphs if p.strip()]
+    texts = [text for p in paragraphs if (text := normalize.paragraph(p, lang))]
+    subject = letter_subject(position, lang)
     if lang == "fr":
         texts = [french_typography(p) for p in texts]
         subject = french_typography(subject)
+    recipient = (
+        [normalize.one_line(organization), _RECRUITMENT[lang], normalize.city(offer_city)]
+        if organization.strip()
+        else []
+    )
     return LetterDocument(
         lang=lang,
         name=full_name(profile),
         contact=build_contact(profile),
         place_date=place_date,
-        recipient=[organization] if organization else [],
+        recipient=[line for line in recipient if line],
         subject=subject,
         salutation=_SALUTATION[lang],
         paragraphs=texts,
         closing=_CLOSING[lang],
-        layout=layout_for(template),
+        layout=layout_for(template, paper),
     )
 
 
 # --- typography and placeholders ----------------------------------------------------------------
 
-NBSP = " "
-NNBSP = " "  # narrow no-break space, before ; ! ? in French
+NBSP = chr(0xA0)  # no-break space
+NNBSP = chr(0x202F)  # narrow no-break space, before ; ! ? in French
 _QUOTES_RE = re.compile(r"[\"“]\s*([^\"“”]+?)\s*[\"”]")
 _HIGH_PUNCT_RE = re.compile(r"(?<=\S)[ \u00a0\u202f]*([;!?])(?=\s|$|[»\"”)])")
 _COLON_RE = re.compile(r"(?<=[^\s:/\d])[ \u00a0\u202f]*:(?=\s|$)")

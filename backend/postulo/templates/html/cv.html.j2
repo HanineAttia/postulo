@@ -1,18 +1,43 @@
 {% extends "base.html.j2" %}
+{% block style %}
+.name { font-size: 2.1em; font-weight: 700; color: {{ L.accent }}; line-height: 1.1; margin-bottom: 7pt; }
+.subtitle { font-size: 1.15em; font-weight: 600; margin-bottom: 5pt; }
+.contact { font-size: 0.95em; }
+.summary { margin-top: 8pt; }
+h2 { font-size: 1.12em; font-weight: 700; color: {{ L.accent }};
+     margin: calc({{ L.leading }}em + {{ L.section_gap }}pt) 0 4pt;
+     padding-bottom: 2.5pt; border-bottom: 0.6pt solid {{ L.accent }}; }
+.entry { margin-top: calc({{ L.leading }}em + {{ L.entry_gap }}pt); break-inside: avoid; }
+/* Two columns: only the left text wraps, the dates stay on the first line, right-aligned. */
+.row { display: grid; grid-template-columns: 1fr auto; column-gap: 12pt; }
+.row .right { text-align: right; white-space: nowrap; font-size: 0.95em; }
+.title { font-weight: 700; }
+.org, .city { font-style: italic; }
+.details { font-size: 0.95em; margin-top: {{ L.bullet_gap }}pt; }
+ul { margin: {{ L.bullet_gap }}pt 0 0; padding-left: 1.05em; }
+li { margin-top: {{ L.bullet_gap }}pt; }
+.line { margin-top: calc({{ L.leading * 0.5 }}em + {{ L.bullet_gap }}pt); }
+.label { font-weight: 700; }
+{% endblock %}
 {% block content %}
+<p class="name">{{ d.name }}</p>
+{% if d.title %}<p class="subtitle">{{ d.title }}</p>{% endif %}
+<p class="contact">
+{%- if d.contact.city %}{{ d.contact.city }}{% endif -%}
+{%- for l in d.contact.links %}{% if not loop.first or d.contact.city %}<span class="sep">·</span>{% endif %}<span><a href="{{ l.url }}">{{ l.label }}</a></span>{% endfor -%}
+</p>
 {% if d.summary %}<p class="summary">{{ d.summary }}</p>{% endif %}
 {% for s in d.sections %}
 <h2>{{ s.title }}</h2>
 {% for e in s.entries %}
 <div class="entry">
-  <div class="head">
-    <div class="main">
-      <span class="title">{% if e.url %}<a href="{{ e.url }}">{{ e.title }}</a>{% else %}{{ e.title }}{% endif %}</span>
-      {%- if e.subtitle %}, {{ e.subtitle }}{% endif %}
-      {%- if e.location %}, {{ e.location }}{% endif %}
-    </div>
-    {% if e.dates %}<div class="dates">{{ e.dates }}</div>{% endif %}
+  <div class="row">
+    <span class="title">{% if e.url %}<a href="{{ e.url }}">{{ e.title }}</a>{% else %}{{ e.title }}{% endif %}</span>
+    <span class="right">{{ e.dates }}</span>
   </div>
+  {% if e.subtitle or e.location %}
+  <div class="row"><span class="org">{{ e.subtitle }}</span><span class="right city">{{ e.location }}</span></div>
+  {% endif %}
   {% if e.details %}<p class="details">{{ e.details }}</p>{% endif %}
   {% if e.bullets %}<ul>{% for b in e.bullets %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
 </div>

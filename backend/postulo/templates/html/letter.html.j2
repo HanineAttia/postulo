@@ -1,11 +1,35 @@
 {% extends "base.html.j2" %}
+{% block page %}@page { size: {{ "A4" if L.paper == "a4" else "letter" }}; margin: 22mm 24mm; }{% endblock %}
+{% block style %}
+/* Same font as the CV; balanced page: the body sits between two flexible spaces. */
+.letter { display: flex; flex-direction: column; min-height: calc({{ "297mm" if L.paper == "a4" else "11in" }} - 44mm - 2pt); line-height: 1.32; }
+.sender .name { font-weight: 700; font-size: 1.25em; color: {{ L.accent }}; }
+.sender { font-size: 0.95em; }
+.recipient { margin: 14pt 0 0 54%; }
+.date { margin-top: 14pt; text-align: right; }
+.grow { flex: 1; }
+.grow-more { flex: 1.6; }
+.subject { font-weight: 700; margin-bottom: 14pt; }
+.body p { margin-bottom: 10pt; }
+.signature { margin-top: 16pt; }
+{% endblock %}
 {% block content %}
 <div class="letter">
-<p style="margin-top: 1.6em">{% for line in d.recipient %}{{ line }}<br>{% endfor %}{{ d.place_date }}</p>
-{% if d.subject %}<p><strong>{{ d.subject }}</strong></p>{% endif %}
-<p>{{ d.salutation }}</p>
-{% for p in d.paragraphs %}<p>{{ p }}</p>{% endfor %}
-<p>{{ d.closing }}</p>
-<p style="margin-top: 1.6em">{{ d.name }}</p>
+  <div class="sender">
+    <div class="name">{{ d.name }}</div>
+    {% if d.contact.city %}<div>{{ d.contact.city }}</div>{% endif %}
+    {% for l in d.contact.links %}<div><a href="{{ l.url }}">{{ l.label }}</a></div>{% endfor %}
+  </div>
+  {% if d.recipient %}<div class="recipient">{% for line in d.recipient %}<div>{{ line }}</div>{% endfor %}</div>{% endif %}
+  <div class="date">{{ d.place_date }}</div>
+  <div class="grow"></div>
+  <div class="body">
+    {% if d.subject %}<p class="subject">{{ d.subject }}</p>{% endif %}
+    <p>{{ d.salutation }}</p>
+    {% for p in d.paragraphs %}<p>{{ p }}</p>{% endfor %}
+    <p>{{ d.closing }}</p>
+    <p class="signature">{{ d.name }}</p>
+  </div>
+  <div class="grow-more"></div>
 </div>
 {% endblock %}

@@ -8,6 +8,7 @@
   data.json            the compacted CV data given to the template
   report.json          warnings, keywords, ATS and jury reports
   CV_*.pdf, Lettre_*.pdf
+  cv-1.png, letter-1.png...  page images for the visual review (SPEC 16.1)
 """
 
 from __future__ import annotations
@@ -22,6 +23,7 @@ from postulo.config import data_dir
 from postulo.services.documents.model import CvDocument, EngineName, LetterDocument
 from postulo.services.quality.ats_check import AtsReport
 from postulo.services.quality.jury import JuryReport
+from postulo.services.quality.layout_check import LayoutReport
 
 APPLICATIONS_DIRNAME = "applications"
 
@@ -47,6 +49,7 @@ class ApplicationReport(BaseModel):
     pages: int = 0
     target_pages: int = 1
     letter_pages: int = 0
+    layout: LayoutReport | None = None  # SPEC 16.1 layout check of the CV
     engine: EngineName = "typst"
     cv_file: str = ""
     letter_file: str = ""
@@ -90,6 +93,11 @@ def read_documents(folder: Path) -> EditableDocuments | None:
     if not path.is_file():
         return None
     return EditableDocuments.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+def preview_pages(folder: Path, kind: str) -> int:
+    """Number of PNG previews of a document (cv-1.png, cv-2.png...)."""
+    return len(list(folder.glob(f"{kind}-*.png")))
 
 
 def read_offer(folder: Path) -> str:

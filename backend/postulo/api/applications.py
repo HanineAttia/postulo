@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Request, Response, status
+from fastapi import Path as Path_
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
@@ -37,6 +38,7 @@ from postulo.services.workshop.pipeline import (
 from postulo.services.workshop.storage import (
     ApplicationReport,
     EditableDocuments,
+    preview_pages,
     read_documents,
     read_offer,
     read_report,
@@ -88,6 +90,7 @@ class ApplicationDetail(ApplicationSummary):
     report: ApplicationReport
     documents: EditableDocuments | None
     files: dict[str, str]
+    previews: dict[str, list[str]]  # PNG image URLs per document, one per page (SPEC 16.1)
 
 
 class DocumentsUpdate(BaseModel):
@@ -117,6 +120,10 @@ def _detail(row: Application) -> ApplicationDetail:
         files["cv"] = f"{base}/cv"
     if report.letter_file:
         files["letter"] = f"{base}/letter"
+    previews = {
+        kind: [f"{base}/{kind}/preview/{n}" for n in range(1, preview_pages(folder, kind) + 1)]
+        for kind in ("cv", "letter")
+    }
     return ApplicationDetail(
         **ApplicationSummary.from_row(row).model_dump(),
         email_subject=row.email_subject,
@@ -125,6 +132,7 @@ def _detail(row: Application) -> ApplicationDetail:
         report=report,
         documents=read_documents(folder),
         files=files,
+        previews=previews,
     )
 
 
@@ -214,6 +222,18 @@ def read_file(
         content_disposition_type="attachment" if download else "inline",
         headers={"Cache-Control": "no-store"},
     )
+
+
+@router.get("/{application_id}/files/{kind}/preview/{page}")
+def read_preview(
+    application_id: str, kind: Literal["cv", "letter"], page: int = Path_(ge=1, le=20)
+) -> FileResponse:
+    """PNG image of one page, for the visual review before sending (SPEC 16.1)."""
+    folder = Path(_get(application_id).folder)
+    path = folder / f"{kind}-{page}.png"
+    if not path.is_file():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Aperçu introuvable.")
+    return FileResponse(path, media_type="image/png", headers={"Cache-Control": "no-store"})
 
 
 @router.put("/{application_id}/documents")

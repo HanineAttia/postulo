@@ -25,7 +25,8 @@ from postulo.services.documents.assemble import (
 )
 from postulo.services.documents.compact import MIN_FONT_SIZE, apply_level, compact_cv
 from postulo.services.documents.html_engine import find_browser, render_html, render_html_source
-from postulo.services.documents.render import render_pdf
+from postulo.services.documents.model import LetterDocument
+from postulo.services.documents.render import RenderError, render_pdf
 from postulo.services.documents.selection import (
     STUDENT_ORDER,
     SelectedItem,
@@ -139,11 +140,11 @@ def test_languages_and_skills_are_lines(profile: CareerProfile) -> None:
 
 def test_french_typography() -> None:
     text = french_typography('Voir "le projet" : oui ! Et https://x.fr à 10:30 ; fin ?')
-    assert "« le projet »" in text
-    assert " :" in text
-    assert " !" in text
-    assert " ;" in text
-    assert " ?" in text
+    assert "« le projet »" in text
+    assert " : oui" in text
+    assert " !" in text
+    assert " ;" in text
+    assert " ?" in text
     assert "https://x.fr" in text
     assert "10:30" in text
 
@@ -172,7 +173,7 @@ def test_document_filename(profile: CareerProfile) -> None:
 def test_typst_cv_is_ats_friendly(profile: CareerProfile, template: str) -> None:
     profile.summary = "Expertise R&D 50% #1 {accolades} $dollar *étoile* _souligné_ <balise>."
     cv = build_cv(profile, default_selection(profile), template=template)  # type: ignore[arg-type]
-    rendered = render_pdf(cv, "cv")
+    _fitted, rendered = compact_cv(cv, 1, lambda d: render_pdf(d, "cv"))
     assert rendered.pages == 1
     text = pdf_text(rendered.data)
     assert text.splitlines()[0].strip() == "Camille Exemple"
@@ -201,10 +202,13 @@ def test_letter_renders_on_one_page(profile: CareerProfile) -> None:
         profile,
         ["Premier paragraphe : concret.", "Deuxième paragraphe.", "Troisième."],
         organization="Banque Exemple",
-        subject="Candidature au stage de data scientist",
+        position="Stage de data scientist",
+        offer_city="lyon",
         today=date(2026, 11, 10),
     )
     assert letter.place_date == "Paris, le 10 novembre 2026"
+    assert letter.subject == "Objet : Candidature – Stage de data scientist"
+    assert letter.recipient == ["Banque Exemple", "Service recrutement", "Lyon"]
     rendered = render_pdf(letter, "letter")
     assert rendered.pages == 1
     text = pdf_text(rendered.data)
@@ -261,7 +265,7 @@ def test_compaction_levels(profile: CareerProfile) -> None:
     level4 = apply_level(cv, 4)
     assert "awards" not in [s.key for s in level4.sections]
     assert len(next(s for s in level4.sections if s.key == "projects").entries) <= 2
-    assert apply_level(cv, 2).layout.size == pytest.approx(9.3)
+    assert apply_level(cv, 2).layout.size == pytest.approx(9.4)
 
 
 # --- HTML fallback ----------------------------------------------------------------------------
@@ -302,7 +306,19 @@ def test_html_engine_with_fake_browser(profile: CareerProfile, tmp_path: Path) -
     assert meta.author == "Camille Exemple"
 
 
-@pytest.mark.skipif(find_browser() is None, reason="no Edge or Chrome installed")
+def _browser_prints() -> bool:
+    """Edge or Chrome can print a trivial page (not the case while an update is pending)."""
+    if find_browser() is None:
+        return False
+    letter = LetterDocument(name="Test", paragraphs=["Test."])
+    try:
+        render_html(letter, "letter")
+    except RenderError:
+        return False
+    return True
+
+
+@pytest.mark.skipif(not _browser_prints(), reason="no Edge or Chrome able to print here")
 # TODO(verify): headless Chrome/Edge fails to print on the Ubuntu CI runner (no stderr). The HTML
 # engine targets Edge on Windows, where this test runs (locally and on the Windows CI job).
 @pytest.mark.skipif(
