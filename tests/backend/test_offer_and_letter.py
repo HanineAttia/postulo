@@ -1,7 +1,8 @@
-"""Offer metadata, slogans, keywords, e-mail signature, letter checks and jury rules (SPEC 16.2-16.3)."""
+"""Offer metadata, slogans, keywords, signature, letter checks, jury rules (SPEC 16.2, 16.3)."""
 
 from __future__ import annotations
 
+import json
 from collections.abc import AsyncIterator
 from importlib import resources
 from pathlib import Path
@@ -218,8 +219,10 @@ async def test_analyze_offer_with_a_provider_keeps_only_values_from_the_offer(
     client: httpx.AsyncClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     save_settings(Settings.model_validate({"ai": {"provider": "claude_code_cli"}}))
-    answer = '{"title": "%s", "organization": "Énergie Exemple", "city": "Paris", ' % SLOGAN
-    answer += '"keywords": ["Python", "Anglais"]}'
+    answer = json.dumps(
+        {"title": SLOGAN, "organization": "Énergie Exemple", "city": "Paris",
+         "keywords": ["Python", "Anglais"]}
+    )  # fmt: skip
     monkeypatch.setattr(
         registry, "get_provider", lambda _s=None: MockProvider({"offer_meta": answer})
     )
