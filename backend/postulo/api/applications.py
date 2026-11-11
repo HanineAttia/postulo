@@ -22,10 +22,18 @@ from postulo.config import load_settings
 from postulo.db.models import Application, ApplicationStatus, utcnow
 from postulo.db.session import get_engine
 from postulo.errors import UserError
-from postulo.services.documents.model import DocLang, EngineName, TemplateName
+from postulo.services.documents.draft import build_offer_meta_prompt, sanitize_offer
+from postulo.services.documents.model import DocLang, EngineName, Paper, TemplateName
+from postulo.services.documents.offer_meta import (
+    OfferMeta,
+    OfferMetaAI,
+    extract_offer_meta,
+    merge_ai_meta,
+)
 from postulo.services.jobs import JobManager, JobRead
 from postulo.services.llm import registry
 from postulo.services.llm.base import LLMError, LLMErrorKind, LLMProvider
+from postulo.services.llm.json_utils import complete_json
 from postulo.services.llm.providers.mock import MockProvider
 from postulo.services.profile import store
 from postulo.services.workshop.pipeline import (
@@ -55,6 +63,8 @@ class ApplicationCreate(BaseModel):
     offer_text: str = Field(max_length=MAX_OFFER_CHARS)
     organization: str = Field(default="", max_length=200)
     position: str = Field(default="", max_length=200)
+    city: str = Field(default="", max_length=100)
+    paper: Paper | None = None
     lang: DocLang | None = None
     template: TemplateName | None = None
     engine: EngineName | None = None
@@ -103,6 +113,10 @@ class SampleOffer(BaseModel):
     text: str
 
 
+class OfferAnalysisRequest(BaseModel):
+    offer_text: str = Field(max_length=MAX_OFFER_CHARS)
+
+
 def _get(application_id: str) -> Application:
     with Session(get_engine()) as session:
         row = session.get(Application, application_id)
@@ -143,6 +157,28 @@ def sample_offer() -> SampleOffer:
     return SampleOffer(text=text)
 
 
+@router.post("/analyze-offer")
+async def analyze_offer(body: OfferAnalysisRequest) -> OfferMeta:
+    """Position, organization, city and keywords, shown pre-filled before generating.
+
+    Rules first (free); then one short AI call when a real provider is configured (in demo
+    mode, rules only). The AI can only confirm values found in the offer.
+    """
+    offer, _warnings = sanitize_offer(body.offer_text)
+    meta = extract_offer_meta(offer)
+    settings = load_settings()
+    if settings.demo_mode or len(offer.strip()) < MIN_OFFER_CHARS:
+        return meta
+    provider = registry.get_provider(settings)
+    available, reason = provider.available()
+    if not available:
+        raise LLMError(LLMErrorKind.NOT_AVAILABLE, reason)
+    ai = await complete_json(
+        provider, build_offer_meta_prompt(offer), OfferMetaAI, timeout=settings.ai.timeout_seconds
+    )
+    return merge_ai_meta(meta, ai, offer)
+
+
 @router.post("", status_code=status.HTTP_202_ACCEPTED)
 async def create_application(body: ApplicationCreate, request: Request) -> JobRead:
     if len(body.offer_text.strip()) < MIN_OFFER_CHARS:
@@ -156,17 +192,30 @@ async def create_application(body: ApplicationCreate, request: Request) -> JobRe
             status.HTTP_409_CONFLICT,
             "Ton parcours est vide : remplis « Mon parcours » ou charge le profil d'exemple.",
         )
+    position = body.position.strip()
+    if not position:
+        # Never a guess: the rules must be sure, otherwise the user types the position.
+        position = extract_offer_meta(sanitize_offer(body.offer_text)[0]).title
+    if not position:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
+            "Indique l'intitulé exact du poste : il n'a pas été trouvé de façon sûre dans l'offre.",
+        )
     settings = load_settings()
     defaults = settings.documents
+    lang = body.lang or defaults.language
     options = WorkshopOptions(
-        lang=body.lang or defaults.language,
+        lang=lang,
         template=body.template or defaults.template,
         engine=body.engine or defaults.engine,
         jury=defaults.jury if body.jury is None else body.jury,
         revision=defaults.revision if body.revision is None else body.revision,
         threshold=defaults.threshold if body.threshold is None else body.threshold,
-        organization=body.organization,
-        position=body.position,
+        organization=body.organization.strip(),
+        position=position,
+        offer_city=body.city.strip(),
+        # French documents are always A4; English ones follow the choice (SPEC 16.3).
+        paper="a4" if lang == "fr" else (body.paper or defaults.paper),
     )
     if settings.demo_mode:
         # Demo mode: a short pause per AI call, so the live progress stays visible.

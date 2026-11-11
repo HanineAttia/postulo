@@ -18,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from postulo.services import prompts
 from postulo.services.documents.model import DocLang
+from postulo.services.documents.rules import rules_prompt
 from postulo.services.documents.selection import MAX_INTERESTS, default_order, limits_for
 from postulo.services.profile.references import assign_references
 from postulo.services.profile.schema import CareerProfile
@@ -133,9 +134,14 @@ def prompt_library(profile: CareerProfile) -> dict[str, Any]:
     }
 
 
-def _common_context(profile: CareerProfile, offer_text: str, lang: DocLang) -> dict[str, Any]:
+def _common_context(
+    profile: CareerProfile, offer_text: str, lang: DocLang, position: str, organization: str
+) -> dict[str, Any]:
     limits = limits_for(profile)
     return {
+        "position": position,
+        "organization": organization,
+        "rules": rules_prompt(lang),
         "lang": lang,
         "lang_name": "français" if lang == "fr" else "anglais",
         "level": (profile.objective.level.value if profile.objective.level else "student"),
@@ -156,9 +162,22 @@ def sanitize_offer(offer_text: str) -> tuple[str, list[str]]:
     return sanitized.text, sanitized.warnings
 
 
-def build_draft_prompt(profile: CareerProfile, offer_text: str, lang: DocLang) -> str:
+def build_draft_prompt(
+    profile: CareerProfile,
+    offer_text: str,
+    lang: DocLang,
+    *,
+    position: str,
+    organization: str = "",
+) -> str:
     """`offer_text` must already be sanitized (sanitize_offer)."""
-    return prompts.render("application_draft", **_common_context(profile, offer_text, lang))
+    context = _common_context(profile, offer_text, lang, position, organization)
+    return prompts.render("application_draft", **context)
+
+
+def build_offer_meta_prompt(offer_text: str) -> str:
+    """`offer_text` must already be sanitized (sanitize_offer)."""
+    return prompts.render("offer_meta", offer_text=offer_text)
 
 
 def build_revision_prompt(
@@ -168,10 +187,13 @@ def build_revision_prompt(
     draft: ApplicationDraft,
     critique: dict[str, Any],
     ats_report: dict[str, Any],
+    *,
+    position: str,
+    organization: str = "",
 ) -> str:
     return prompts.render(
         "application_revision",
-        **_common_context(profile, offer_text, lang),
+        **_common_context(profile, offer_text, lang, position, organization),
         draft_json=draft.model_dump_json(indent=1),
         critique_json=json.dumps(critique, ensure_ascii=False, indent=1),
         ats_json=json.dumps(ats_report, ensure_ascii=False, indent=1),

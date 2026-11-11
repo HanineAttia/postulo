@@ -9,12 +9,14 @@ mapped to stable codes.
 
 from __future__ import annotations
 
+import re
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from postulo.services import prompts
 from postulo.services.documents.model import DocLang
+from postulo.services.documents.rules import RULE_IDS, rules_prompt
 from postulo.services.llm.base import LLMProvider
 from postulo.services.llm.json_utils import complete_json
 from postulo.services.prompts.sanitize import sanitize_text
@@ -38,7 +40,15 @@ class _RawCorrection(BaseModel):
     model_config = ConfigDict(extra="ignore")
     priority: str = "medium"
     target: str = ""
+    rule: str | None = ""
     text: str = ""
+
+
+class _RawRule(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = ""
+    ok: bool = True
+    comment: str | None = ""
 
 
 class RawJury(BaseModel):
@@ -48,13 +58,21 @@ class RawJury(BaseModel):
     six_second_impression: str = ""
     criteria: dict[str, Any] = Field(default_factory=dict)
     strengths: list[str] = Field(default_factory=list)
+    rules: list[_RawRule] = Field(default_factory=list)
     corrections: list[_RawCorrection] = Field(default_factory=list)
 
 
 class Correction(BaseModel):
     priority: Priority
     target: str
+    rule: str = ""  # R-xx id of the rule concerned (SPEC 16.3), empty if none
     text: str
+
+
+class RuleVerdict(BaseModel):
+    id: str
+    ok: bool
+    comment: str = ""
 
 
 class JuryReport(BaseModel):
@@ -63,6 +81,7 @@ class JuryReport(BaseModel):
     six_second_impression: str
     criteria: dict[str, float]  # each on 10
     strengths: list[str]
+    rules: list[RuleVerdict] = Field(default_factory=list)
     corrections: list[Correction]
 
 
@@ -86,6 +105,22 @@ def normalize_score(raw: float, criteria: dict[str, float]) -> int:
     return round(max(0.0, min(100.0, score)))
 
 
+def _rule_id(value: str | None) -> str:
+    """'r-2', 'R02' or 'R-02' -> 'R-02'; unknown ids are dropped."""
+    digits = re.sub(r"\D", "", value or "")
+    rule = f"R-{int(digits):02d}" if digits else ""
+    return rule if rule in RULE_IDS else ""
+
+
+def _verdicts(raw: list[_RawRule]) -> list[RuleVerdict]:
+    seen: dict[str, RuleVerdict] = {}
+    for item in raw:
+        rule = _rule_id(item.id)
+        if rule and rule not in seen:
+            seen[rule] = RuleVerdict(id=rule, ok=item.ok, comment=(item.comment or "").strip())
+    return sorted(seen.values(), key=lambda v: v.id)
+
+
 def normalize_jury(raw: RawJury) -> JuryReport:
     criteria = {
         key: value for key in CRITERIA if (value := _criterion(raw.criteria.get(key))) is not None
@@ -100,6 +135,7 @@ def normalize_jury(raw: RawJury) -> JuryReport:
             Correction(
                 priority=_PRIORITIES.get(c.priority.strip().lower(), "medium"),
                 target=c.target.strip().lower() or "cv",
+                rule=_rule_id(c.rule),
                 text=c.text.strip(),
             )
             for c in raw.corrections
@@ -113,6 +149,7 @@ def normalize_jury(raw: RawJury) -> JuryReport:
         six_second_impression=raw.six_second_impression.strip(),
         criteria=criteria,
         strengths=[s.strip() for s in raw.strengths if s.strip()],
+        rules=_verdicts(raw.rules),
         corrections=corrections,
     )
 
@@ -122,6 +159,7 @@ def build_jury_prompt(
 ) -> str:
     return prompts.render(
         "jury",
+        rules=rules_prompt(lang),
         round=round_number,
         lang_name="en français" if lang == "fr" else "for an English-speaking recruiter",
         cv_text=sanitize_text(cv_text).text,

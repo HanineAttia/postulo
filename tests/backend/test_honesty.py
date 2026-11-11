@@ -32,6 +32,7 @@ from postulo.services.profile.sample import sample_profile
 from postulo.services.profile.schema import CareerProfile
 
 OFFER = resources.files("postulo").joinpath("data/sample_offer.txt").read_text("utf-8")
+POSITION = "Stage de fin d'études - Data scientist (H/F)"
 
 
 @pytest.fixture
@@ -197,7 +198,7 @@ def test_prompt_contains_references_but_no_contact_details(profile: CareerProfil
     library = prompt_library(profile)
     assert set(library["items"]) >= {"F0", "E0", "E1", "P0", "P1", "C0", "R0", "A0", "L0"}
     text, _warnings = sanitize_offer(OFFER)
-    prompt = build_draft_prompt(profile, text, "fr")
+    prompt = build_draft_prompt(profile, text, "fr", position=POSITION)
     assert prompt.startswith("TASK: application_draft")
     assert "camille.exemple@example.com" not in prompt
     assert "+33 6" not in prompt
@@ -235,7 +236,9 @@ def test_merge_revision_keeps_useful_parts() -> None:
 @pytest.mark.anyio
 async def test_mock_draft_is_honest_and_complete(profile: CareerProfile) -> None:
     text, _ = sanitize_offer(OFFER)
-    answer = await MockProvider().complete(build_draft_prompt(profile, text, "fr"))
+    answer = await MockProvider().complete(
+        build_draft_prompt(profile, text, "fr", position=POSITION)
+    )
     draft = parse_as(answer, ApplicationDraft)
     result = apply_guard(draft, profile, text)
     assert result.warnings == []
@@ -243,6 +246,8 @@ async def test_mock_draft_is_honest_and_complete(profile: CareerProfile) -> None
     assert draft.offer.organization == "Énergie Exemple"
     assert letter_warnings(draft.letter.paragraphs, profile, text) == []
     revision = await MockProvider().complete(
-        build_revision_prompt(profile, text, "fr", draft, {"score": 74}, {"score": 90})
+        build_revision_prompt(
+            profile, text, "fr", draft, {"score": 74}, {"score": 90}, position=POSITION
+        )
     )
     assert parse_as(revision, ApplicationDraft).cv.experiences == draft.cv.experiences

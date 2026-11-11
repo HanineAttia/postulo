@@ -435,3 +435,47 @@ def document_filename(kind: str, profile: CareerProfile, organization: str) -> s
     """CV_Prenom-Nom_Organisation.pdf (SPEC 7.5). Organization is optional."""
     parts = [kind, _slug(full_name(profile)) or "Candidat", _slug(organization)]
     return "_".join(p for p in parts if p) + ".pdf"
+
+
+# --- e-mail signature ---------------------------------------------------------------------------
+
+_EMAIL_CLOSING: dict[DocLang, str] = {"fr": "Bien cordialement,", "en": "Kind regards,"}
+_CLOSING_WORDS = ("cordialement", "salutations", "bien a vous", "regards", "sincerely", "best")
+_PHONE_LIKE_RE = re.compile(r"(?:\+?\d[\s.\-]?){8,}")
+
+
+def email_signature(profile: CareerProfile) -> list[str]:
+    """First and last name, phone and LinkedIn, only those present in the profile."""
+    ident = profile.identity
+    lines = [full_name(profile), ident.phone or "", ident.linkedin or ""]
+    return [line for line in lines if line]
+
+
+def with_signature(body: str, profile: CareerProfile, lang: DocLang) -> str:
+    """Replace whatever signature the AI wrote by the one built from the profile (correction a).
+
+    Trailing lines that look like a signature (name, phone, e-mail, links, placeholders) are
+    removed; a closing formula is added if missing; then the profile signature is appended.
+    """
+    name = strip_accents(full_name(profile)).lower()
+    lines = body.rstrip().split("\n")
+
+    def is_signature(line: str) -> bool:
+        text = strip_accents(line.strip()).lower()
+        return (
+            not text
+            or (bool(name) and text == name)
+            or text.startswith("[")
+            or "@" in text
+            or "linkedin" in text
+            or "http" in text
+            or text.startswith(("tel", "phone", "mobile", "portable"))
+            or _PHONE_LIKE_RE.fullmatch(text) is not None
+        )
+
+    while lines and is_signature(lines[-1]):
+        lines.pop()
+    last = strip_accents(lines[-1]).lower() if lines else ""
+    if not any(word in last for word in _CLOSING_WORDS):
+        lines += ["", _EMAIL_CLOSING[lang]]
+    return "\n".join([*lines, *email_signature(profile)])

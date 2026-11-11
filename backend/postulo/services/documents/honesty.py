@@ -76,6 +76,29 @@ def tokens(text: str) -> set[str]:
     return {t for t in _WORD_RE.findall(normalize_term(text)) if len(t) > 2} - _STOPWORDS
 
 
+MAX_KEYWORD_WORDS = 3
+MAX_KEYWORD_CHARS = 40
+LANGUAGE_NAMES = frozenset(
+    re.findall(
+        r"\S+",
+        "francais anglais espagnol allemand italien portugais chinois mandarin japonais arabe "
+        "russe neerlandais coreen english french spanish german italian portuguese chinese "
+        "japanese arabic russian dutch korean bilingue bilingual",
+    )
+)
+
+
+def is_short_keyword(text: str) -> bool:
+    """SPEC correction d: 1 to 3 technical words, never a language nor a sentence."""
+    value = text.strip()
+    words = normalize_term(value).split()
+    if not words or len(words) > MAX_KEYWORD_WORDS or len(value) > MAX_KEYWORD_CHARS:
+        return False
+    if any(mark in value for mark in (".", "!", "?", ":", ";")) and not re.search(r"\w\.\w", value):
+        return False
+    return not any(word in LANGUAGE_NAMES for word in words)
+
+
 def offer_tokens(offer_text: str) -> set[str]:
     """Meaningful words of an offer, to measure the relevance of a library element."""
     return tokens(offer_text)
@@ -284,7 +307,7 @@ class _Guard:
         seen: set[str] = set()
         for raw in proposed:
             key = normalize_term(raw)
-            if key and key not in seen and contains_term(offer, raw):
+            if key and key not in seen and is_short_keyword(raw) and contains_term(offer, raw):
                 seen.add(key)
                 result.append(raw.strip())
         return result[:MAX_KEYWORDS]

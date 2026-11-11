@@ -15,6 +15,7 @@ from postulo.app import create_app
 from postulo.services.documents.assemble import build_cv
 from postulo.services.documents.compact import compact_cv
 from postulo.services.documents.model import CvDocument
+from postulo.services.documents.preview_png import PNG_SIGNATURE
 from postulo.services.documents.render import RenderedPdf, render_pdf
 from postulo.services.documents.selection import default_selection
 from postulo.services.llm.usage import calls_today
@@ -211,6 +212,26 @@ async def test_full_pipeline_in_demo_mode(client: httpx.AsyncClient, postulo_hom
 
     listing = (await client.get("/api/applications")).json()
     assert [a["id"] for a in listing] == [detail["id"]]
+
+    # SPEC 16: the position, never the slogan of the first line; complete layout; images.
+    position = "Stage de fin d'études - Data scientist (H/F)"
+    assert detail["position"] == position
+    assert detail["documents"]["cv"]["title"] == position
+    assert "Construisons" not in detail["documents"]["cv"]["title"]
+    assert detail["documents"]["letter"]["subject"].endswith("Candidature – " + position)
+    assert detail["email_subject"] == "Candidature – " + position
+    assert detail["report"]["warnings"] == []
+    assert all(c["ok"] for c in report["layout"]["checks"]), report["layout"]
+    assert 0.85 <= report["layout"]["fill"] <= 1.0
+    assert detail["email_body"].endswith(
+        "Bien cordialement,\nCamille Exemple\n+33 6 00 00 00 00\n"
+        "https://www.linkedin.com/in/camille-exemple-fictif"
+    )
+    assert report["jury_before"]["rules"]
+    assert detail["previews"]["cv"] == [f"/api/applications/{detail['id']}/files/cv/preview/1"]
+    image = await client.get(detail["previews"]["letter"][0])
+    assert image.headers["content-type"] == "image/png"
+    assert image.content.startswith(PNG_SIGNATURE)
 
 
 @pytest.mark.anyio

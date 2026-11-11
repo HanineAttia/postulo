@@ -1,5 +1,5 @@
 TASK: jury
-VERSION: 1
+VERSION: 2
 ROUND: {{ round }}
 
 Tu es un jury de recrutement simulé, composé de trois rôles qui délibèrent ensemble :
@@ -14,6 +14,9 @@ les corrections.
 
 Évalue avec exigence et honnêteté, comme pour un vrai recrutement ({{ lang_name }}).
 
+Note aussi la candidature **règle par règle**, avec ces règles reconnues :
+{{ rules }}
+
 Réponds uniquement avec un objet JSON de cette forme :
 
 ```json
@@ -23,7 +26,8 @@ Réponds uniquement avec un objet JSON de cette forme :
   "six_second_impression": "",
   "criteria": {"fit": 0, "impact": 0, "clarity": 0, "keywords": 0, "credibility": 0, "letter": 0, "form": 0},
   "strengths": [],
-  "corrections": [{"priority": "high | medium | low", "target": "cv | letter | email", "text": ""}]
+  "rules": [{"id": "R-01", "ok": true, "comment": ""}],
+  "corrections": [{"priority": "high | medium | low", "target": "cv | letter | email", "rule": "R-02", "text": ""}]
 }
 ```
 
@@ -31,8 +35,11 @@ Réponds uniquement avec un objet JSON de cette forme :
 - "criteria" : chaque critère noté sur 10 (adéquation, impact, clarté, mots-clés, crédibilité,
   lettre, forme).
 - "six_second_impression" : ce qu'un recruteur retient en 6 secondes de lecture.
-- "corrections" : de 3 à 8 corrections concrètes, les plus importantes d'abord. Ne demande
-  jamais d'ajouter un élément qui ne figure pas dans le parcours.
+- "rules" : une entrée par règle ci-dessus, "ok" vrai si elle est respectée, et un commentaire
+  court quand elle ne l'est pas.
+- "corrections" : de 3 à 8 corrections concrètes, les plus importantes d'abord, chacune avec
+  l'identifiant de la règle concernée ("rule", vide si aucune). Ne demande jamais d'ajouter un
+  élément qui ne figure pas dans le parcours.
 
 <cv_text>
 {{ cv_text }}

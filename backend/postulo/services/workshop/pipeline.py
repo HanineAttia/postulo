@@ -30,6 +30,7 @@ from postulo.services.documents.assemble import (
     document_filename,
     fill_placeholders,
     french_typography,
+    with_signature,
 )
 from postulo.services.documents.compact import compact_cv, compact_letter
 from postulo.services.documents.draft import (
@@ -40,7 +41,13 @@ from postulo.services.documents.draft import (
     sanitize_offer,
 )
 from postulo.services.documents.fill import fill_selection
-from postulo.services.documents.honesty import GuardResult, apply_guard, letter_warnings
+from postulo.services.documents.honesty import (
+    GuardResult,
+    apply_guard,
+    contains_term,
+    letter_warnings,
+    normalize_term,
+)
 from postulo.services.documents.model import (
     CvDocument,
     DocLang,
@@ -50,6 +57,7 @@ from postulo.services.documents.model import (
     TemplateName,
     layout_for,
 )
+from postulo.services.documents.offer_meta import looks_like_job_title
 from postulo.services.documents.preview_png import pdf_to_png_pages
 from postulo.services.documents.render import RenderedPdf, document_data, render_pdf
 from postulo.services.documents.selection import Selection, limits_for
@@ -60,6 +68,7 @@ from postulo.services.profile.schema import CareerProfile
 from postulo.services.quality.ats_check import AtsReport, check_cv_pdf, extract_text
 from postulo.services.quality.jury import JuryReport, run_jury
 from postulo.services.quality.layout_check import LayoutReport, check_layout
+from postulo.services.quality.letter_check import check_letter
 from postulo.services.workshop.storage import (
     ApplicationReport,
     EditableDocuments,
@@ -136,8 +145,22 @@ def produce(
     draft: ApplicationDraft, profile: CareerProfile, offer_text: str, options: WorkshopOptions
 ) -> Produced:
     guard = apply_guard(draft, profile, offer_text)
-    organization = options.organization.strip() or draft.offer.organization.strip()
-    position = options.position.strip() or draft.offer.title.strip() or guard.selection.title
+    position = options.position.strip()
+    organization = options.organization.strip()
+    ai_organization = draft.offer.organization.strip()
+    if (
+        not organization
+        and ai_organization
+        and contains_term(normalize_term(offer_text), ai_organization)
+    ):
+        organization = ai_organization  # only a name found in the offer
+    # CV title: the AI wording if it is a real job title containing the position, else the
+    # position itself (never a slogan, SPEC 16.2).
+    ai_title = guard.selection.title
+    if not (
+        looks_like_job_title(ai_title) and normalize_term(position) in normalize_term(ai_title)
+    ):
+        guard.selection.title = position
 
     def build(selection: Selection) -> CvDocument:
         return build_cv(
@@ -167,7 +190,13 @@ def produce(
         template=options.template,
         paper=options.paper,
     )  # fmt: skip
-    warnings = [*guard.warnings, *letter_warnings(letter.paragraphs, profile, offer_text)]
+    warnings = [
+        *guard.warnings,
+        *letter_warnings(letter.paragraphs, profile, offer_text),
+        *check_letter(
+            letter.paragraphs, offer_text=offer_text, organization=organization, position=position
+        ),
+    ]
     if not letter.paragraphs:
         warnings.append("L'IA n'a pas rédigé de lettre : complète-la avec « Éditer ».")
     # Built here from the validated position, never from the AI (no slogan, no "Objet :").
@@ -178,8 +207,12 @@ def produce(
         if position
         else normalize.one_line(draft.email.subject)
     )
-    email_body = normalize.email_body(
-        fill_placeholders(draft.email.body, profile, organization=organization, role=position),
+    email_body = with_signature(
+        normalize.email_body(
+            fill_placeholders(draft.email.body, profile, organization=organization, role=position),
+            options.lang,
+        ),
+        profile,
         options.lang,
     )
     if options.lang == "fr":
@@ -247,7 +280,13 @@ def make_application_job(
         (folder / "offer.txt").write_text(offer, encoding="utf-8")
         draft = await complete_json(
             provider,
-            build_draft_prompt(profile, offer, options.lang),
+            build_draft_prompt(
+                profile,
+                offer,
+                options.lang,
+                position=options.position,
+                organization=options.organization,
+            ),
             ApplicationDraft,
             timeout=timeout,
         )
@@ -279,6 +318,8 @@ def make_application_job(
                 draft,  # the original draft, never the guarded one (lesson 5)
                 jury_before.model_dump(),
                 produced.rendered.ats.summary_for_prompt(),
+                position=options.position,
+                organization=produced.organization,
             )
             revised = await complete_json(provider, prompt, ApplicationDraft, timeout=timeout)
             merged = merge_revision(draft, revised)

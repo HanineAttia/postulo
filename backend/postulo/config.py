@@ -76,6 +76,7 @@ class DocumentSettings(BaseModel):
     engine: Literal["typst", "html"] = "typst"
     template: Literal["modern", "classic"] = "modern"
     language: Literal["fr", "en"] = "fr"
+    paper: Literal["a4", "us-letter"] = "a4"  # used for English documents (French: always A4)
     jury: bool = True
     revision: bool = True
     threshold: int = Field(default=82, ge=0, le=100)
